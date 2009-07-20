@@ -1,0 +1,98 @@
+// "BatchConvertStacksToZProjJPGS"
+//
+// This macro batch processes all the .bin.gz (ie IGS format) files 
+// in a folder and any subfolders in that folder.
+// It then saves them in the Amiramesh format using the Amira_Writer plugin
+// The new file will have the name of the folder containing the "image.bin.gz" file
+// along with the suffix .am
+// ie some/image/path/image.bin.gz -> some/image/path.am
+
+// (Slightly) Adapted by Greg Jefferis from code at
+// http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
+
+// jefferis@gmail.com
+
+// v 0.1 2007-11-07
+// - first version in response to a request from Jai
+
+requires("1.33s"); 
+dir = getDirectory("Choose a stacks directory");
+outputDir = getDirectory("Choose output directory");
+setBatchMode(true);
+count = 0;
+countFiles(dir);
+print("Total files: "+count);
+n = 0;
+processFiles(dir, outputDir);
+
+function countFiles(dir) {
+		list = getFileList(dir);
+	for (i=0; i<list.length; i++) {
+		if (endsWith(list[i], "/"))
+            countFiles(""+dir+list[i]);
+	else
+		count++;
+	}
+}
+
+function processFiles(dir,outputDir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            processFiles(""+dir+list[i], outputDir);
+        else {
+		showProgress(n++, count);
+              processFile(dir,outputDir,list[i]);
+        }
+    }
+}
+
+function processFile(dir,outputDir,file) {
+	if (endsWith(file, ".pic") || endsWith(file,".PIC")) {
+		if(File.exists(outputDir+substring(file,0,indexOf(file,"_"))+"_C"+substring(file,lengthOf(file)-5,lengthOf(file)-4)+".jpg")==1) {
+			print("image pic exist" + file);
+			return 0;
+		} else {
+			 print(outputDir+substring(file,0,indexOf(file,"_"))+"_C1.jpg");
+			 print(File.exists(outputDir+substring(file,0,indexOf(file,"_"))+"_C1.jpg"));
+		}
+		path = dir+list[i];
+		open(path);
+		processImage();
+		saveAs("Jpeg", outputDir+substring(file,0,indexOf(file,"_"))+"_C"+substring(file,lengthOf(file)-5,lengthOf(file)-4));
+		close();
+		close();
+	}
+	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		if(File.exists(outputDir+substring(file,0,lengthOf(file)-4)+"_C1.jpg")==1 ) {
+			print("image lsm exist" + file);
+			return 0;
+		}
+		path = dir+list[i];
+		run("Bio-Formats Importer", "open=" + path + " view=[Standard ImageJ] stack_order=Default split_channels");
+		title=getTitle();
+		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
+		workingImage=getImageID();
+		noImages++;
+		for(i=noImages;i>0;i--){
+			if(i==1) channel="_02";
+			if(i==2) channel="_01";
+			selectImage(workingImage);
+			processImage();
+			run("Biorad ...", "biorad=["+outputDir+substring(file,0,indexOf(file,".lsm"))+channel+".pic]");
+//				"SAIV"+substring(file,indexOf(file,"_")+2,lastIndexOf(file,"_"))+"-1v_0"+channel+".pic]");
+//			saveAs("Jpeg", outputDir+substring(file,0,lengthOf(file)-4)+"_C"+i);
+//			close();
+			selectImage(workingImage);
+			close();
+			workingImage++;
+		} 
+	}
+}
+
+function processImage() {
+	run("Rotate 90 Degrees Right");;
+//	run("Z Project...", "projection=[Standard Deviation]");
+//	run("8-bit");
+//	run("Flip Vertically");
+}
