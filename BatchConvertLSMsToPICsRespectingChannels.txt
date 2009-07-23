@@ -128,7 +128,7 @@ function processFile(dir,outputDir,file) {
 			channel=lsmchannels[i];
 			selectImage(workingImage);
 			processImage();
-			run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"v_0"+channel+".pic]");
+			run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
 			selectImage(workingImage);
 			close();
 			workingImage++;
