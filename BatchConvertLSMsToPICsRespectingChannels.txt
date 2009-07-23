@@ -12,8 +12,8 @@
 // 6) Can't yet figure out what kind of image this is
 //    which might help decide whether to flip/rotate etc
 
-// Can be passed 3 comma separated arguments on the command line
-// inputDir, outputDir, file
+// Can be passed 2 comma separated arguments on the command line
+// inputPath, outputDir
 
 // Adapted by Aaron Ostrovsky, Sebastian Cachero and
 // Greg Jefferis from code at
@@ -43,12 +43,16 @@ if (file==""){
 	}
 } else {
 	arg = split(file,",");
-		if (arg.length!=3) {
+		if (arg.length!=2) {
 		exit();
-	} else if(arg[0]=="" || arg[1]=="" || arg[2]==""){
+	} else if(arg[0]=="" || arg[1]==""){
 		exit();
 	} else {
-		processFile(arg[0],arg[1],arg[2]);
+		dir=File.getParent(arg[0])+"/";
+		file=File.getName(arg[0]);
+		outputDir=arg[1];
+		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
+		processFile(dir,outputDir,file);
 	}	
 }
 
