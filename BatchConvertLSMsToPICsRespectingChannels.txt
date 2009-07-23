@@ -91,11 +91,11 @@ function processFile(dir,outputDir,file) {
 		lsmchannels=newArray(5);
 		channelsfound=0;
 		for(l=0;l<xmllines.length;l++){
-			if(indexOf(xmllines[l],"ILL_NAME")>0){
+			if(indexOf(xmllines[l],"DYE_NAME")>0){
 				if(indexOf(xmllines[l],"488")>0){
 					lsmchannels[++channelsfound]=2;
 				}
-				if(indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
+				if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
 					lsmchannels[++channelsfound]=1;
 				}
 				if(indexOf(xmllines[l],"647")>0 || indexOf(xmllines[l],"633")>0){
