@@ -133,7 +133,8 @@ function processFile(dir,outputDir,file) {
 }
 
 function processImage() {
-	run("Flip Vertically", "stack");
+	run("Rotate 90 Degrees Right");
+//	run("Flip Vertically", "stack");
 //	run("Z Project...", "projection=[Standard Deviation]");
 //	run("8-bit");
 //	run("Flip Vertically");
