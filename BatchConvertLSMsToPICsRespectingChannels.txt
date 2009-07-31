@@ -13,7 +13,8 @@
 //    which might help decide whether to flip/rotate etc
 
 // Can be passed 2 comma separated arguments on the command line
-// inputPath, outputDir
+// inputPath, outputDir or inputDir, outputDir. In the later case
+// it will iterate on all the files from the inputDir
 
 // Adapted by Aaron Ostrovsky, Sebastian Cachero and
 // Greg Jefferis from code at
@@ -21,10 +22,40 @@
 
 requires("1.42k"); 
 file = getArgument;
+dir=""
+outputDir=""
+
 //print("file = "+file);
-if (file==""){
-	dir = getDirectory("Choose a stacks directory");
-	outputDir = getDirectory("Choose output directory");
+if (file!=""){
+	arg = split(file,",");
+		if (arg.length!=2) {
+		exit();
+	} else if(arg[0]=="" || arg[1]==""){
+		exit();
+	} else {
+		outputDir=arg[1];
+		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
+
+		if(File.isDirectory(arg[0])) {
+// we're dealing with a directory
+			dir=arg[0];
+			if(!endsWith(dir,"/")) dir=dir+"/";
+		} else {
+// single file
+			dir=File.getParent(arg[0])+"/";
+			file=File.getName(arg[0]);
+			processFile(dir,outputDir,file);
+			exit();
+		}
+	}
+}	
+
+
+
+
+	if(dir=="") dir = getDirectory("Choose a stacks directory");
+	if(outputDir=="") outputDir = getDirectory("Choose output directory");
+
 	setBatchMode(true);
 	count = 0;
 	countFiles(dir);
@@ -41,20 +72,6 @@ if (file==""){
 			count++;
 		}
 	}
-} else {
-	arg = split(file,",");
-		if (arg.length!=2) {
-		exit();
-	} else if(arg[0]=="" || arg[1]==""){
-		exit();
-	} else {
-		dir=File.getParent(arg[0])+"/";
-		file=File.getName(arg[0]);
-		outputDir=arg[1];
-		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
-		processFile(dir,outputDir,file);
-	}	
-}
 
 
 function processFiles(dir,outputDir) {
@@ -137,7 +154,7 @@ function processFile(dir,outputDir,file) {
 }
 
 function processImage() {
-	run("Rotate 90 Degrees Right");
+//	run("Rotate 90 Degrees Right");
 //	run("Flip Vertically", "stack");
 //	run("Z Project...", "projection=[Standard Deviation]");
 //	run("8-bit");
