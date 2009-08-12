@@ -50,7 +50,10 @@ function processFiles(dir,outputDir) {
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".pic") || endsWith(file,".PIC")) {
 		path = dir+file;
-		run("Bio-Formats Importer", "open=" + path + " view=[Standard ImageJ] stack_order=Default split_channels");
+//Change from opening files using the LOCI importer to using the Biorad reader
+// For some reason the LOCI tool looses the information about units and image size changing from whatever to pixels
+		run("Biorad...", "open=" + path);
+//		run("Bio-Formats Importer", "open=" + path + " view=[Standard ImageJ] stack_order=Default split_channels");
 		title=getTitle();
 		processImage();
 		run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"h_0"+channel+".pic]");
