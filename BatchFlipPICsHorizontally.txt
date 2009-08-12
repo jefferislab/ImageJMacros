@@ -15,9 +15,39 @@
 
 // jefferis@gmail.com
 
-requires("1.33s"); 
-dir = getDirectory("stacks directory");
-outputDir = getDirectory("output directory");
+requires("1.42k"); 
+file = getArgument;
+dir=""
+outputDir=""
+
+//print("file = "+file);
+if (file!=""){
+	arg = split(file,",");
+		if (arg.length!=2) {
+		exit();
+	} else if(arg[0]=="" || arg[1]==""){
+		exit();
+	} else {
+		outputDir=arg[1];
+		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
+
+		if(File.isDirectory(arg[0])) {
+			// we're dealing with a directory
+			dir=arg[0];
+			if(!endsWith(dir,"/")) dir=dir+"/";
+		} else {
+			// single file
+			dir=File.getParent(arg[0])+"/";
+			file=File.getName(arg[0]);
+			processFile(dir,outputDir,file);
+			exit();
+		}
+	}
+}	
+
+if(dir=="") dir = getDirectory("Choose a stacks directory");
+if(outputDir=="") outputDir = getDirectory("Choose output directory");
+
 setBatchMode(true);
 count = 0;
 countFiles(dir);
