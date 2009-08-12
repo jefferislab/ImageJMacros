@@ -1,16 +1,12 @@
-// "BatchConvertLSMsToPICs"
+// "BatchFlipPICsHorizontally"
 //
-// This macro batch processes all the lsm files in a folder
-// saving them as pic files.
-// Limitations/Specifics
-// 1) Only works with Fiji
-// 2) Swaps channel 1 and 2
-// 3) Always flips vertically 
-// 4) Expects names to be in regular JLab format
-//    or in something where all it has to do is append the
-//    v01.pic v02.pic etc to the filestem
+// This macro batch processes all the pic files in a folder hierarchy
+//   flipping them horizontally
+// Expects names to be in regular JLab format
+//   or in something where all it has to do is append the
+//   v01.pic v02.pic etc to the filestem
 
-// (Slightly) Adapted by Greg Jefferis from code at
+// Adapted by Greg Jefferis from code at
 // http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
 
 // jefferis@gmail.com
