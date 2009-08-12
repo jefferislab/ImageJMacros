@@ -16,8 +16,8 @@
 // jefferis@gmail.com
 
 requires("1.33s"); 
-dir = getDirectory("Choose a stacks directory");
-outputDir = getDirectory("Choose output directory");
+dir = getDirectory("stacks directory");
+outputDir = getDirectory("output directory");
 setBatchMode(true);
 count = 0;
 countFiles(dir);
