@@ -48,17 +48,36 @@ function processFiles(dir,outputDir) {
 }
 
 function processFile(dir,outputDir,file) {
-	if (endsWith(file, ".pic") || endsWith(file,".PIC")) {
+	lfile=toLowerCase(file);
+	if (endsWith(lfile, ".pic") /*|| endsWith(lfile, ".pic.gz") */) {
 		path = dir+file;
-//Change from opening files using the LOCI importer to using the Biorad reader
-// For some reason the LOCI tool looses the information about units and image size changing from whatever to pixels
-		run("Biorad...", "open=" + path);
-//		run("Bio-Formats Importer", "open=" + path + " view=[Standard ImageJ] stack_order=Default split_channels");
-		title=getTitle();
+		//SAJB2-1v_01.pic
+		if(!matches(file,"[A-Z]{4}[0-9]{1,3}-[1-9]{1,2}[a-z]*[_]*0[1-9]+\\.[pP][iI][cC]")){
+			print("Skipping file: "+file+" since it has a non-canonical name");
+			return;			
+		}
+		prefix=replace(file,"([A-Z]{4}[0-9]{1,3}-[1-9]{1,2}[a-z]*)[_]*0[1-9]+\\.[pP][iI][cC]","$1");
+		suffix=replace(file,"[A-Z]{4}[0-9]{1,3}-[1-9]{1,2}[a-z]*([_]*0[1-9]+\\.[pP][iI][cC])","$1");
+		outfile=prefix+"h"+suffix;
+		outpath=outputDir+outfile;
+		lockpath=outputDir+outfile+'.lock';
+		if(File.exists(outpath)){
+			print("Skipping file: " + file + " since " + outfile + " already exists");
+			return;
+		}
+		if(File.exists(lockpath)){
+			print("Skipping file: " + file + " since someone else is working on it");
+			return;
+		}
+		File.saveString("",lockpath)
+		print("Inpath = "+path);
+		print("Outpath = "+outpath);
+		print("lockpath = "+lockpath);
+		run("Biorad...", "open=[" + path + "]");
 		processImage();
-		run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"h_0"+channel+".pic]");
+		run("Biorad ...", "biorad=[" + outpath + "]");
 		close();
-		} 
+		File.delete(lockpath);
 	}
 }
 
