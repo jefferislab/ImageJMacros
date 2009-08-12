@@ -39,10 +39,10 @@ if (file!=""){
 			exit();
 		}
 	}
-}	
+}
 
-if(dir=="") dir = getDirectory("Choose a stacks directory");
-if(outputDir=="") outputDir = getDirectory("Choose output directory");
+if(dir=="") dir = getDirectory("stacks directory");
+if(outputDir=="") outputDir = getDirectory("output directory");
 
 setBatchMode(true);
 count = 0;
