@@ -11,6 +11,13 @@
 
 // jefferis@gmail.com
 
+/* Run from the command line as follows
+fiji -eval '
+runMacro("/Volumes/JData/JPeople/Common/CommonCode/ImageJMacros/BatchFlipPICsHorizontally.txt",
+"/Volumes/JData/JPeople/Sebastian/fruitless/Registration/IS2Reg/images.unsorted/,/Volumes/JData/JPeople/Sebastian/fruitless/Registration/IS2Reg/images.unflipped/SAJ/");
+' -batch --headless
+*/
+
 requires("1.42k"); 
 file = getArgument;
 dir=""
