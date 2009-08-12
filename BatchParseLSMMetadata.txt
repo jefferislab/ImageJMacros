@@ -41,7 +41,7 @@ function processFiles(dir,outputDir) {
 	list = getFileList(dir);
     for (i=0; i<list.length; i++) {
         if (endsWith(list[i], "/"))
-            processFiles(""+dir+list[i], outputDir);
+            processFiles(""+dir+list[i], outputDir+list[i]);
         else {
 		if(isLSMFile(list[i])){
 			showProgress(n++, count);
