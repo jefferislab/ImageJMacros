@@ -89,7 +89,7 @@ function processFiles(dir,outputDir) {
 function processFile(dir,outputDir,file) {
 	print("dir = "+dir,"; outputDir = "+outputDir,"; file = "+file);
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
-		c1picpath=dir+substring(file,0,lengthOf(file)-4)+"01.pic";
+		c1picpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01.pic";
 		if(File.exists(c1picpath)){
 			print("Skipping file: "+file+" since 01.pic already exists");
 			return;			
@@ -104,12 +104,24 @@ function processFile(dir,outputDir,file) {
 		// parse xml file to identify channel order
 		xmlstr=File.openAsString(xmlpath);
 		xmllines=split(xmlstr,"\n");
+
+		// get the number of channels from the xml file
+		noImages=0;
+		for(l=0;l<xmllines.length;l++){
+			if(indexOf(xmllines[l],"IMAGES_NUMBER_CHANNELS")>0){
+				noImages=parseInt(substring(xmllines[l],indexOf(xmllines[l],"\">")+2,indexOf(xmllines[l],"</")));
+			} 
+		}
+		if( noImages==0 )
+			print("Image No not found in XML data for image: "+file);
+
+
 		// make an array to handle up to 4 channels
 		lsmchannels=newArray(5);
 		channelsfound=0;
 		for(l=0;l<xmllines.length;l++){
 			if(indexOf(xmllines[l],"DYE_NAME")>0){
-				if(indexOf(xmllines[l],"488")>0){
+				if(indexOf(xmllines[l],"488")>0 || indexOf(xmllines[l],"FITC")>0 || indexOf(xmllines[l],"GFP")>0){
 					lsmchannels[++channelsfound]=2;
 				}
 				if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
@@ -121,25 +133,48 @@ function processFile(dir,outputDir,file) {
 			}
 		}
 				
+		if( (channelsfound) != noImages ){
+			print("exploring ILL_NAME");
+			channelsfound=0;
+			for(l=0;l<xmllines.length;l++){
+				if(indexOf(xmllines[l],"ILL_NAME")>0){
+					if(indexOf(xmllines[l],"488")>0){
+						lsmchannels[++channelsfound]=2;
+					}
+					if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
+						lsmchannels[++channelsfound]=1;
+					}
+					if(indexOf(xmllines[l],"647")>0 || indexOf(xmllines[l],"633")>0){
+						lsmchannels[++channelsfound]=3;
+					}
+				}
+			
+			}
+		}
+
 		lsmpath = dir+file;
-		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
-		title=getTitle();
-		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
-		workingImage=getImageID();
-		noImages++;
-		
+
 		// Check that we have the same number of channels from the metadata file
 		// and the lsm file. 
 		if( (channelsfound) != noImages){
 			print("Skipping "+lsmpath+"\nNumber of channels extracted from metadata ("+channelsfound+") not equal to channels from lsm ("+noImages+")");
 			// Close open images so we don't end up running out of memory
-			for(i=noImages;i>0;i--){
-				selectImage(workingImage);
-				close();
-				workingImage++;
-			} 
+//			for(i=noImages;i>0;i--){
+//				selectImage(workingImage);
+//				close();
+//				workingImage++;
+//			} 
 			return;
 		}
+
+
+
+		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
+//		title=getTitle();
+//		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
+		workingImage=getImageID();
+//		noImages++;
+		
 		
 		for(i=noImages;i>0;i--){
 			channel=lsmchannels[i];

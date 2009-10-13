@@ -170,6 +170,8 @@ function processFile(dir,outputDir,file) {
 
 		lsmpath = dir+file;
 
+		// Check that we have the same number of channels from the metadata file
+		// and the lsm file. 
 		if( (channelsfound) != noImages ){
 			print("Skipping"+lsmpath+"\nNumber of channels extracted from metadata ("+channelsfound+") not equal to channels from lsm ("+noImages+")");
 			// Close open images so we don't end up running out of memory
@@ -187,8 +189,6 @@ function processFile(dir,outputDir,file) {
 		workingImage=getImageID();
 //		noImages++;
 		
-		// Check that we have the same number of channels from the metadata file
-		// and the lsm file. 
 		
 		for(i=noImages;i>0;i--){
 			selectImage(workingImage);
