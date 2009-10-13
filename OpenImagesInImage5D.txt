@@ -1,0 +1,43 @@
+requires("1.42k"); 
+argument = getArgument;
+
+tmpDir=getDirectory("temp")+"OpenImagesInImage5D"
+
+if(argument=="") {
+	print("Wrong number of arguments");
+	exit();
+} else {
+
+// Make a tmp dir
+	if(File.exists(getDirectory("temp")+"OpenImagesInImage5D")==1){
+		cmd="rm -r -f "+tmpDir;
+		exec(cmd);
+	}
+	File.makeDirectory(tmpDir)
+	
+	argument = split(argument,",");	
+	
+// Make soft links for the brains
+	noImages=0;
+	for( i=1; i<argument.length; i++){
+//		print(argument[i]);
+		if(File.exists(argument[i])==1){
+			cmd="ln -s "+ argument[i] + " " + tmpDir + "/tmpFile" + i;
+			exec(cmd);
+//			print(argument[i]+" exists!");
+			noImages=noImages+1;
+			
+		} else {
+			print(argument[i]+" doesn't exist!");
+		}
+	}
+	cmd="open="+tmpDir+"/tmpFile1.nrrd number="+noImages+" starting=1 increment=1 scale=100 file=tmpFile 3rd=z 4th=ch 3rd_dimension_size="+argument[0]+" 4th_dimension_size="+noImages+" assign";
+	run("Open Series As Image5D", cmd);}
+	
+	for( i=1; i<argument.length; i++){
+		run("Set Position", "x-position=1 y-position=1 channel="+(i+1)+" slice=100 frame=1 display=overlay");
+		resetMinAndMax();
+		run("Set Channel Labels", i+"="+File.getName(argument[i]));
+	}
+	run("Set Position", "x-position=1 y-position=1 channel=1 slice=1 frame=1 display=overlay");
+	
