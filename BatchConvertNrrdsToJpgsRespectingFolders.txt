@@ -52,10 +52,10 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file,".nrrd")) {
-		newpath=outputDir+substring(file,0,lengthOf(file)-4)
+		newpath=outputDir+substring(file,0,lengthOf(file)-4)+"jpg";
 		if(File.exists(newpath)){
 			print("Skipping file: "+file+" since jpg already exists");
-			return;			
+			return;
 		}
 		path = dir+list[i];
 		open(path);
