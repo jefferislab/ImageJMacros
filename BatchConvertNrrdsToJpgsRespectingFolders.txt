@@ -52,12 +52,15 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file,".nrrd")) {
-			 print(outputDir+substring(file,0,indexOf(file,"_"))+"_C1.jpg");
-			 print(File.exists(outputDir+substring(file,0,indexOf(file,"_"))+"_C1.jpg"));
+		newpath=outputDir+substring(file,0,lengthOf(file)-4)
+		if(File.exists(newpath)){
+			print("Skipping file: "+file+" since jpg already exists");
+			return;			
+		}
 		path = dir+list[i];
 		open(path);
 		processImage();
-		saveAs("Jpeg", outputDir+substring(file,0,lengthOf(file)-4));
+		saveAs("Jpeg", newpath);
 		close();
 		close();
 	}
