@@ -1,11 +1,9 @@
 // "BatchConvertStacksToZProjJPGS"
 //
-// This macro batch processes all the .bin.gz (ie IGS format) files 
+// This macro batch processes all the nrrd files 
 // in a folder and any subfolders in that folder.
-// It then saves them in the Amiramesh format using the Amira_Writer plugin
-// The new file will have the name of the folder containing the "image.bin.gz" file
-// along with the suffix .am
-// ie some/image/path/image.bin.gz -> some/image/path.am
+// It then Z projects them and saves them in JPG format 
+// ie some/image/path/image.nrrd -> some/image/path/image.jpg
 
 // (Slightly) Adapted by Greg Jefferis from code at
 // http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
