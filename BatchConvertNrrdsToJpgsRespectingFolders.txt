@@ -5,17 +5,58 @@
 // It then Z projects them and saves them in JPG format 
 // ie some/image/path/image.nrrd -> some/image/path/image.jpg
 
-// (Slightly) Adapted by Greg Jefferis from code at
+// Takes up to 4 arguments
+// <indir/file> <outdir> [informat] [outformat]
+// informat should be the suffix of the input file eg nrrd, pic etc
+// outformat should be the suffix of the output file eg jpg, png, tiff
+// for output formats see documentation for saveAs at:
+// http://rsbweb.nih.gov/ij/developer/macro/functions.html#S
+
+// Adapted by Greg Jefferis from code at
 // http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
 
 // jefferis@gmail.com
 
-// v 0.1 2007-11-07
-// - first version in response to a request from Jai
+requires("1.42k"); 
+file = getArgument;
+dir="";
+outputDir="";
+saveformat="jpg";
+informat="nrrd";
 
-requires("1.33s"); 
-dir = getDirectory("Choose a stacks directory");
-outputDir = getDirectory("Choose output directory");
+// Process arguments if we were given any
+if (file!=""){
+	arg = split(file,",");
+	// Must specify 2 or 3 arguments
+	if (arg.length>3)
+		saveformat=arg[3];
+	if (arg.length>2)
+		informat=arg[2];
+	else if(arg.length!=2)
+		exit();
+	// Must specify input and output dirs
+	if(arg[0]=="" || arg[1]=="") exit();
+
+	outputDir=arg[1];
+	if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
+
+	if(File.isDirectory(arg[0])) {
+	// we're dealing with a directory
+		dir=arg[0];
+		if(!endsWith(dir,"/")) dir=dir+"/";
+	} else {
+	// single file
+		dir=File.getParent(arg[0])+"/";
+		file=File.getName(arg[0]);
+		processFile(dir,outputDir,file);
+		exit();
+	}
+}
+
+// ... else ask for user input
+if(dir=="") dir = getDirectory("Choose a stacks directory");
+if(outputDir=="") outputDir = getDirectory("Choose output directory");
+
 setBatchMode(true);
 count = 0;
 countFiles(dir);
@@ -49,16 +90,16 @@ function processFiles(dir,outputDir) {
 }
 
 function processFile(dir,outputDir,file) {
-	if (endsWith(file,".nrrd")) {
-		newpath=outputDir+substring(file,0,lengthOf(file)-4)+"jpg";
+	if (endsWith(file,"."+informat)) {
+		newpath=outputDir+substring(file,0,lengthOf(file)-lengthOf(informat))+saveformat;
 		if(File.exists(newpath)){
-			print("Skipping file: "+file+" since jpg already exists");
+			print("Skipping file: "+file+" since "+saveformat+" already exists");
 			return;
 		}
 		path = dir+list[i];
 		open(path);
 		processImage();
-		saveAs("Jpeg", newpath);
+		saveAs(saveformat, newpath);
 		close();
 		close();
 	}
