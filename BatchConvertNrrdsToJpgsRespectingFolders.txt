@@ -83,20 +83,21 @@ function processFiles(dir,outputDir) {
 			}
             processFiles(""+dir+list[i], ""+outputDir+list[i]);
         } else {
-		showProgress(n++, count);
-              processFile(dir,outputDir,list[i]);
+			showProgress(n++, count);
+			processFile(dir,outputDir,list[i]);
         }
     }
 }
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file,"."+informat)) {
+		path = dir+file;
 		newpath=outputDir+substring(file,0,lengthOf(file)-lengthOf(informat))+saveformat;
-		if(File.exists(newpath)){
-			print("Skipping file: "+file+" since "+saveformat+" already exists");
+		if(File.exists(newpath) && 
+			File.lastModified(newpath) > File.lastModified(path) ){
+			print("Skipping file: "+file+" since "+saveformat+" already exists and is newer than input");
 			return;
 		}
-		path = dir+list[i];
 		open(path);
 		processImage();
 		saveAs(saveformat, newpath);
