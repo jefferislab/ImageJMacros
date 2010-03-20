@@ -1,3 +1,4 @@
 
 firstStack=
 run("3D Stitching", "first_stack=AABI8-2.lsm use_channel_for_first=[Red, Green and Blue] second_stack=AABI8-3.lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=AABI8stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
+saveAs("Tiff", "/Volumes/JData/JPeople/Sebastian/ConfocalStacks/AABI8stitched.tif");
