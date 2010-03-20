@@ -1,0 +1,78 @@
+// "MakeMontageDimorphicConnections"
+//
+// This macro batch processes all the png files in dir
+// and any subfolders within that folder.
+// Processing includes opening 6 files with the same stem
+// and then making a montage of them and saving it to the outputDir as a jpg
+// The new filename will be the stem+jpg
+
+// (Slightly) Adapted by Greg Jefferis from code at
+// http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
+
+// jefferis@gmail.com
+
+requires("1.33s");
+dir = getDirectory("Choose an input Directory ");
+outputDir = getDirectory("Choose an output Directory ");
+setBatchMode(true);
+count = 0;
+countFiles(dir);
+n = 0;
+processFiles(dir, outputDir);
+//print(count+" files processed");
+
+function countFiles(dir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            countFiles(""+dir+list[i]);
+        else
+            count++;
+    }
+}
+
+function processFiles(dir, outputDir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            processFiles(""+dir+list[i], outputDir);
+        else {
+           showProgress(n++, count);
+           //path = dir+list[i];
+           processFile(dir,list[i],outputDir);
+        }
+    }
+}
+
+function processFile(dir,file,outputDir) {
+	if (endsWith(file, ".png")) {
+		path = dir+file;
+		montageStem=substring(file,0,lastIndexOf(file,"_"));
+		if(File.exists(outputDir+montageStem+".jpg")) {
+			print("Skipping file: "+dir+montageStem+".jpg");
+			return;
+		} else {
+		
+			if(File.exists(outputDir+"tempFile.txt")) {
+				if(File.delete(outputDir+"tempFile.txt")!=1){
+					print("File : "outputDir+"tempFile.txt"+" could not be deleted");
+					return;
+				}
+			}
+			File.saveString(dir+montageStem+"_DimorphicM.png"+"\r"+
+				dir+montageStem+"_BothM.png"+"\r"+
+				dir+montageStem+"_BothObliqueM.png"+"\r"+
+				dir+montageStem+"_DimorphicF.png"+"\r"+
+				dir+montageStem+"_BothF.png"+"\r"+
+				dir+montageStem+"_BothObliqueF.png", outputDir+"tempFile.txt");
+			
+			run("Stack From List...", "open="+outputDir+"tempFile.txt");
+			run("Make Montage...", "columns=3 rows=2 scale=0.5 first=1 last=6 increment=1 border=0 font=12");
+			print("Saving montage to : "+outputDir+montageStem+".jpg" );
+			saveAs("Jpeg", outputDir+montageStem+".jpg" );
+			close();
+		}
+		
+		
+	}
+}
