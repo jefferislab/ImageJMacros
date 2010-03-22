@@ -1,4 +1,66 @@
+// dir = getDirectory("Choose a Directory ");
+//setBatchMode(true);
+// count = 0;
+// countFiles(dir);
+// n = 0;
+// // processFiles(dir);
+// //print(count+" files processed");
+// 
+// function countFiles(dir) {
+// 	list = getFileList(dir);
+//     for (i=0; i<list.length; i++) {
+//         if (endsWith(list[i], "/"))
+//             countFiles(""+dir+list[i]);
+//         else
+//             count++;
+//     }
+// }
+requires("1.43q");
+file = getArgument;
+dir=""
+outputDir=""
+// setBatchMode(true);
 
-firstStack=
-run("3D Stitching", "first_stack=AABI8-2.lsm use_channel_for_first=[Red, Green and Blue] second_stack=AABI8-3.lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=AABI8stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
-saveAs("Tiff", "/Volumes/JData/JPeople/Sebastian/ConfocalStacks/AABI8stitched.tif");
+// if (file!=""){
+// 	arg = split(file,",");
+// 		if (arg.length!=3) {
+// 		exit();
+// 	} else if(arg[0]=="" || arg[1]=="" || arg[2]==""){
+// 		exit();
+// 	} else {
+// 		outputDir=arg[1];
+// 		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
+// 
+// 		if(File.isDirectory(arg[0])) {
+// // we're dealing with a directory
+// 			dir=arg[0];
+// 			if(!endsWith(dir,"/")) dir=dir+"/";
+// 		} else {
+// // single file
+// 			dir=File.getParent(arg[0])+"/";
+// 			file=File.getName(arg[0]);
+// 			processFile(dir,outputDir,file);
+// 			exit();
+// 		}
+// 	}
+// }
+arg = newArray(5);
+arg = split(file,",");
+dir = arg[0]
+firstStack = arg[2];
+secondStack = arg[3];
+finalName = arg[4];
+// print(arg[2]);
+// print(arg[3]);
+// print(arg[0]);
+// print(arg[1]);
+// print(arg[4]);
+
+run("Bio-Formats Importer", "open="+dir+firstStack+".lsm autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+run("Bio-Formats Importer", "open="+dir+secondStack+".lsm autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+
+// firstStack=
+run("3D Stitching", "first_stack="+firstStack+".lsm use_channel_for_first=[Red, Green and Blue] second_stack="+secondStack+".lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
+saveAs("Tiff", dir+finalName+"stitched.tif");
+// close();
+// close();
