@@ -1,66 +1,31 @@
-// dir = getDirectory("Choose a Directory ");
-//setBatchMode(true);
-// count = 0;
-// countFiles(dir);
-// n = 0;
-// // processFiles(dir);
-// //print(count+" files processed");
-// 
-// function countFiles(dir) {
-// 	list = getFileList(dir);
-//     for (i=0; i<list.length; i++) {
-//         if (endsWith(list[i], "/"))
-//             countFiles(""+dir+list[i]);
-//         else
-//             count++;
-//     }
-// }
-requires("1.43q");
 file = getArgument;
-dir=""
-outputDir=""
-// setBatchMode(true);
-
-// if (file!=""){
-// 	arg = split(file,",");
-// 		if (arg.length!=3) {
-// 		exit();
-// 	} else if(arg[0]=="" || arg[1]=="" || arg[2]==""){
-// 		exit();
-// 	} else {
-// 		outputDir=arg[1];
-// 		if(!endsWith(outputDir,"/")) outputDir=outputDir+"/";
-// 
-// 		if(File.isDirectory(arg[0])) {
-// // we're dealing with a directory
-// 			dir=arg[0];
-// 			if(!endsWith(dir,"/")) dir=dir+"/";
-// 		} else {
-// // single file
-// 			dir=File.getParent(arg[0])+"/";
-// 			file=File.getName(arg[0]);
-// 			processFile(dir,outputDir,file);
-// 			exit();
-// 		}
-// 	}
-// }
+dir="";
+outputDir="";
 arg = newArray(5);
 arg = split(file,",");
-dir = arg[0]
+dir = arg[0];
+outdir = arg[1];
 firstStack = arg[2];
+//firstStack = "AABI19-2";
 secondStack = arg[3];
+// secondStack = "AABI19-3";
 finalName = arg[4];
+// finalName = "AABI19";
 // print(arg[2]);
 // print(arg[3]);
 // print(arg[0]);
 // print(arg[1]);
 // print(arg[4]);
 
-run("Bio-Formats Importer", "open="+dir+firstStack+".lsm autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-run("Bio-Formats Importer", "open="+dir+secondStack+".lsm autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+run("Bio-Formats Importer", "open="+dir+firstStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+img1name=getTitle();
+run("Bio-Formats Importer", "open="+dir+secondStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+img2name=getTitle();
 
-// firstStack=
-run("3D Stitching", "first_stack="+firstStack+".lsm use_channel_for_first=[Red, Green and Blue] second_stack="+secondStack+".lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
-saveAs("Tiff", dir+finalName+"stitched.tif");
-// close();
-// close();
+
+print("stitching " +img1name+ " and " +img2name);
+run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
+saveAs("Tiff", outdir+finalName+"_stitched.tif");
+close();
+close();
+close();
