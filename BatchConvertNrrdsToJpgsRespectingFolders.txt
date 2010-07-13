@@ -98,6 +98,7 @@ function processFile(dir,outputDir,file) {
 			print("Skipping file: "+file+" since "+saveformat+" already exists and is newer than input");
 			return;
 		}
+		print("Processing image"+path);
 		open(path);
 		processImage();
 		saveAs(saveformat, newpath);
