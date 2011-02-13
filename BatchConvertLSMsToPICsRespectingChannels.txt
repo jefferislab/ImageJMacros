@@ -25,6 +25,7 @@ file = getArgument;
 dir=""
 outputDir=""
 nc82channel=2 // => 2nd channel in increasing wavelength order (normally 561 excitation line)
+outputformat="pic" // or nrrd
 
 // 1) Check what arguments we've received 
 // --------------------------------------
@@ -229,7 +230,13 @@ function processFile(dir,outputDir,file) {
 			channel=outputChannelOrder[i];
 			selectImage(workingImage);
 			processImage();
-			run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+			if(outputformat=='pic'){
+				run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+			} else {
+				setKeyDown("alt");
+				run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+				setKeyDown("none");
+			}
 			selectImage(workingImage);
 			close();
 			workingImage++;
