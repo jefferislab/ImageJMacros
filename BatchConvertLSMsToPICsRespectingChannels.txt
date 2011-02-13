@@ -241,7 +241,7 @@ function processFile(dir,outputDir,file) {
 				run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
 			} else {
 				setKeyDown("alt");
-				run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+				run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".nrrd]");
 				setKeyDown("none");
 			}
 			selectImage(workingImage);
