@@ -26,6 +26,8 @@ dir=""
 outputDir=""
 nc82channel=2 // => 2nd channel in increasing wavelength order (normally 561 excitation line)
 outputformat="nrrd" // or nrrd
+// if xml is missing assumes input channels are in wavelength order
+AssumeChannelsInWavelengthOrder=1
 
 // 1) Check what arguments we've received 
 // --------------------------------------
@@ -103,10 +105,14 @@ function processFiles(dir,outputDir) {
         }
     }
 }
-function getIndicesOfChannelsInWavelengthOrder(dir,file) {
+function getLsmChannelWavelengths(dir,file) {
 	// This is the path of the xml meta data file
 	xmlpath=dir+substring(file,0,lengthOf(file)-4)+".xml";
 	if(!File.exists(xmlpath)){
+		if(AssumeChannelsInWavelengthOrder){
+			print("Assuming channels in wavelength order since no XML metadata available at "+xmlpath);
+			return newArray(0);
+		}
 		print("Skipping file: "+file+" since no XML metadata available at "+xmlpath);
 		return;
 	}
@@ -166,11 +172,7 @@ function getIndicesOfChannelsInWavelengthOrder(dir,file) {
 	// Get rid of any elements in the array where we didn't find a channel 
 	//(e.g. last array element when 3 channels present)
 	lsmchannels=Array.trim(lsmchannels,channelsfound);
-	
-	// If channels come in 568, 488, 633 these will be 1,0,2
-	// If channels come in 633, 488, 488 these will be 2,0,1
-	indicesOfChannelsInWavelengthOrder=Array.rankPositions(lsmchannels);
-	return indicesOfChannelsInWavelengthOrder;
+	return lsmchannels;
 }
 
 function processFile(dir,outputDir,file) {
@@ -182,7 +184,18 @@ function processFile(dir,outputDir,file) {
 			return;			
 		}
 
-		indicesOfChannelsInWavelengthOrder=getIndicesOfChannelsInWavelengthOrder(dir,file);
+		lsmchannels=getLsmChannelWavelengths(dir,file);
+		if(AssumeChannelsInWavelengthOrder && lsmchannels.length==0 ){
+			// FIXME - figure out how many channels there are in absence of xml metadata
+			// Dummy wavelenths
+			noImages=3;
+			lsmchannels=newArray(100,200,300);
+		}
+		
+		// If channels come in 568, 488, 633 these will be 1,0,2
+		// If channels come in 633, 488, 488 these will be 2,0,1
+		indicesOfChannelsInWavelengthOrder=Array.rankPositions(lsmchannels);
+
 		// TODO: Looks like this is now the same as prev definition of channelsfound
 		// but check this
 		channelsfound=indicesOfChannelsInWavelengthOrder.length;
