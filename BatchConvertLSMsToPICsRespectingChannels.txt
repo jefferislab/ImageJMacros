@@ -25,20 +25,29 @@ file = getArgument;
 dir=""
 outputDir=""
 nc82channel=2 // => 2nd channel in increasing wavelength order (normally 561 excitation line)
+outputformat="pic" // or nrrd
+// if xml is missing assumes input channels are in wavelength order
+AssumeChannelsInWavelengthOrder=1
 
 // 1) Check what arguments we've received 
 // --------------------------------------
 //print("file = "+file);
 if (file!=""){
 	arg = split(file,",");
-	if (arg.length<2 || arg.length>3) {
+	if (arg.length<2 || arg.length>4) {
 		exit();
 	}
 	// Specify the nc82 channel using 3rd arg
-	if (arg.length==3){
+	if (arg.length>=3){
 		nc82channel=parseInt(arg[2]);
 		if(isNaN(nc82channel) || nc82channel<1 || nc82channel>3){
 			exit("nc82 channel must be between 1 and 3");
+		}
+	}
+	if (arg.length==4){
+		outputformat=arg[3];
+		if( ! (outputformat == "pic" || outputformat == "nrrd")){
+			exit("Output format must be either pic or nrrd");
 		}
 	}
 	// ... now deal with directories
@@ -102,45 +111,58 @@ function processFiles(dir,outputDir) {
         }
     }
 }
-
-function processFile(dir,outputDir,file) {
-	print("dir = "+dir,"; outputDir = "+outputDir,"; file = "+file);
-	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
-		c1picpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01.pic";
-		if(File.exists(c1picpath)){
-			print("Skipping file: "+file+" since 01.pic already exists");
-			return;			
+function getLsmChannelWavelengths(dir,file) {
+	// This is the path of the xml meta data file
+	xmlpath=dir+substring(file,0,lengthOf(file)-4)+".xml";
+	if(!File.exists(xmlpath)){
+		if(AssumeChannelsInWavelengthOrder){
+			print("Assuming channels in wavelength order since no XML metadata available at "+xmlpath);
+			return newArray(0);
 		}
+		print("Skipping file: "+file+" since no XML metadata available at "+xmlpath);
+		return;
+	}
+	// parse xml file to identify channel order
+	xmlstr=File.openAsString(xmlpath);
+	xmllines=split(xmlstr,"\n");
 
-		// This is the path of the xml meta data file
-		xmlpath=dir+substring(file,0,lengthOf(file)-4)+".xml";
-		if(!File.exists(xmlpath)){
-			print("Skipping file: "+file+" since no XML metadata available at "+xmlpath);
-			return;
+	// get the number of channels from the xml file
+	noImages=0;
+	for(l=0;l<xmllines.length;l++){
+		if(indexOf(xmllines[l],"IMAGES_NUMBER_CHANNELS")>0){
+			noImages=parseInt(substring(xmllines[l],indexOf(xmllines[l],"\">")+2,indexOf(xmllines[l],"</")));
+		} 
+	}
+	if( noImages==0 )
+		print("Image No not found in XML data for image: "+file);
+
+	// make an array to handle up to 4 channels
+	// this array has an index corresponding to channel order in the input file
+	// (which is the same order that loci bio-formats will open the channels)
+	// and a value which corresponds to the wavelength order of the channel
+	lsmchannels=newArray(4);
+	channelsfound=0;
+	for(l=0;l<xmllines.length;l++){
+		if(indexOf(xmllines[l],"DYE_NAME")>0){
+			if(indexOf(xmllines[l],"488")>0 || indexOf(xmllines[l],"FITC")>0 || indexOf(xmllines[l],"GFP")>0){
+				lsmchannels[channelsfound++]=488;
+			}
+			if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
+				lsmchannels[channelsfound++]=568;
+			}
+			if(indexOf(xmllines[l],"647")>0 || indexOf(xmllines[l],"633")>0){
+				lsmchannels[channelsfound++]=633;
+			}
 		}
-		// parse xml file to identify channel order
-		xmlstr=File.openAsString(xmlpath);
-		xmllines=split(xmlstr,"\n");
-
-		// get the number of channels from the xml file
-		noImages=0;
-		for(l=0;l<xmllines.length;l++){
-			if(indexOf(xmllines[l],"IMAGES_NUMBER_CHANNELS")>0){
-				noImages=parseInt(substring(xmllines[l],indexOf(xmllines[l],"\">")+2,indexOf(xmllines[l],"</")));
-			} 
-		}
-		if( noImages==0 )
-			print("Image No not found in XML data for image: "+file);
-
-		// make an array to handle up to 4 channels
-		// this array has an index corresponding to channel order in the input file
-		// (which is the same order that loci bio-formats will open the channels)
-		// and a value which corresponds to the wavelength order of the channel
-		lsmchannels=newArray(4);
+	}
+	// This should only come into play in a few files (LSM 510 only?)
+	// where there is no DYE_NAME set
+	if( (channelsfound) != noImages ){
+		print("exploring ILL_NAME as a backup since no / inconsistent DYE_NAMES found");
 		channelsfound=0;
 		for(l=0;l<xmllines.length;l++){
-			if(indexOf(xmllines[l],"DYE_NAME")>0){
-				if(indexOf(xmllines[l],"488")>0 || indexOf(xmllines[l],"FITC")>0 || indexOf(xmllines[l],"GFP")>0){
+			if(indexOf(xmllines[l],"ILL_NAME")>0){
+				if(indexOf(xmllines[l],"488")>0){
 					lsmchannels[channelsfound++]=488;
 				}
 				if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
@@ -149,35 +171,40 @@ function processFile(dir,outputDir,file) {
 				if(indexOf(xmllines[l],"647")>0 || indexOf(xmllines[l],"633")>0){
 					lsmchannels[channelsfound++]=633;
 				}
-			}
+			}			
 		}
-		// This should only come into play in a few files (LSM 510 only?)
-		// where there is no DYE_NAME set
-		if( (channelsfound) != noImages ){
-			print("exploring ILL_NAME as a backup since no / inconsistent DYE_NAMES found");
-			channelsfound=0;
-			for(l=0;l<xmllines.length;l++){
-				if(indexOf(xmllines[l],"ILL_NAME")>0){
-					if(indexOf(xmllines[l],"488")>0){
-						lsmchannels[channelsfound++]=488;
-					}
-					if(indexOf(xmllines[l],"568")>0 || indexOf(xmllines[l],"561")>0 || indexOf(xmllines[l],"543")>0){
-						lsmchannels[channelsfound++]=568;
-					}
-					if(indexOf(xmllines[l],"647")>0 || indexOf(xmllines[l],"633")>0){
-						lsmchannels[channelsfound++]=633;
-					}
-				}			
-			}
+	}
+	
+	// Get rid of any elements in the array where we didn't find a channel 
+	//(e.g. last array element when 3 channels present)
+	lsmchannels=Array.trim(lsmchannels,channelsfound);
+	return lsmchannels;
+}
+
+function processFile(dir,outputDir,file) {
+	print("dir = "+dir,"; outputDir = "+outputDir,"; file = "+file);
+	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		c1picpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
+		if(File.exists(c1picpath)){
+			print("Skipping file: "+file+" since 01."+outputformat+" already exists");
+			return;			
 		}
-		
-		// Get rid of any elements in the array where we didn't find a channel 
-		//(e.g. last array element when 3 channels present)
-		lsmchannels=Array.trim(lsmchannels,channelsfound);
+
+		lsmchannels=getLsmChannelWavelengths(dir,file);
+		if(AssumeChannelsInWavelengthOrder && lsmchannels.length==0 ){
+			// FIXME - figure out how many channels there are in absence of xml metadata
+			// Dummy wavelenths
+			noImages=3;
+			lsmchannels=newArray(100,200,300);
+		}
 		
 		// If channels come in 568, 488, 633 these will be 1,0,2
 		// If channels come in 633, 488, 488 these will be 2,0,1
 		indicesOfChannelsInWavelengthOrder=Array.rankPositions(lsmchannels);
+
+		// TODO: Looks like this is now the same as prev definition of channelsfound
+		// but check this
+		channelsfound=indicesOfChannelsInWavelengthOrder.length;
 		
 		// First identify wavelength of nc82 channel
 		nc82wavelength=0;
@@ -210,14 +237,14 @@ function processFile(dir,outputDir,file) {
 		}
 
 		lsmpath = dir+file;
-
+		
 		// Check that we have the same number of channels from the metadata file
 		// and the lsm file. 
 		if( (channelsfound) != noImages){
 			print("Skipping "+lsmpath+"\nNumber of channels extracted from metadata ("+channelsfound+") not equal to channels from lsm ("+noImages+")");
 			return;
 		}
-
+		
 		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
 //		title=getTitle();
 //		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
@@ -229,7 +256,13 @@ function processFile(dir,outputDir,file) {
 			channel=outputChannelOrder[i];
 			selectImage(workingImage);
 			processImage();
-			run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+			if(outputformat=='pic'){
+				run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".pic]");
+			} else {
+				setKeyDown("alt");
+				run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".nrrd]");
+				setKeyDown("none");
+			}
 			selectImage(workingImage);
 			close();
 			workingImage++;
