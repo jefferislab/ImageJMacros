@@ -1,0 +1,78 @@
+requires("1.42k"); 
+argument = getArgument;
+
+function trim(s) {
+	return replace(s,"^\\s*(.*)\\s*$","$1");
+}
+
+newName="";
+
+if(argument=="") {
+	print("Wrong number of arguments");
+	exit();
+} else {
+	argument = split(argument,",");
+	if (argument.length!=2) {
+		exit();
+	} else if (argument[0]=="" || argument[1]=="") {
+			exit();
+	} else {
+//		print("arg0:",infile,"\n arg1:",transforms);
+		infile=argument[0];
+		transforms=argument[1];
+		
+		imageformat="";
+		if(endsWith(toLowerCase(infile),".pic")){
+			imageformat="pic";
+			run("Biorad...", "open="+infile);
+		}
+		if(endsWith(toLowerCase(infile),".jpg")){
+			imageformat="jpg"
+			open(infile);
+		}
+		while(lengthOf(transforms)!=0) {
+			print("argument:"+transforms);
+			operation=substring(transforms,0,1);
+			transforms=substring(transforms,1,lengthOf(transforms));
+			print("operation:"+operation);
+			if(operation=="c") {
+				run("Rotate 90 Degrees Right");
+//				newName=newName+"c";
+			}
+			if(operation=="a"){ 
+				run("Rotate 90 Degrees Left");
+//				newName=newName+"a";
+			}
+			if(operation=="h"){ 
+				run("Flip Horizontally", "stack");
+				newName=newName+"h";
+			}
+			if(operation=="v"){ 
+				run("Flip Vertically", "stack");
+				newName=newName+"v";
+			}
+			if((operation=="r") && endsWith(toLowerCase(infile),".pic")) {
+				run("Stack Reverser");
+				newName=newName+"r";
+			}
+			if(operation=="f"){ 
+				run("Rotate... ", "angle=180 grid=1 interpolation=None stack");
+//				newName=newName+"f";
+			}
+		}
+
+		if(imageformat=="pic"){
+			run("Biorad ...", "biorad="+infile);
+			if(newName != "") {
+				newName=substring(infile,0,indexOf(toLowerCase(infile),".pic")-3)+newName+substring(infile,lengthOf(infile)-7);
+				File.rename(infile,newName);
+			} 
+		}
+
+		if(imageformat=="jpg"){
+			saveAs("Jpeg", infile);
+		}
+		close();
+	}
+}
+
