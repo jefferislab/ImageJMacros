@@ -26,6 +26,10 @@ if(argument=="") {
 			imageformat="pic";
 			run("Biorad...", "open="+infile);
 		}
+		if(endsWith(toLowerCase(infile),".nrrd")){
+			imageformat="nrrd";
+			run("Nrrd ...", "load=["+infile+"]");
+		}
 		if(endsWith(toLowerCase(infile),".jpg")){
 			imageformat="jpg"
 			open(infile);
@@ -67,6 +71,15 @@ if(argument=="") {
 				newName=substring(infile,0,indexOf(toLowerCase(infile),".pic")-3)+newName+substring(infile,lengthOf(infile)-7);
 				File.rename(infile,newName);
 			} 
+		}
+
+		if(imageformat=="nrrd"){
+			run("Nrrd ... ", "nrrd=["+infile+"]");
+			// if(newName != "") {
+			// 	// stem_01.nrrd -> stemv_01.nrrd
+			// 	newName=substring(infile,0,indexOf(toLowerCase(infile),".nrrd")-4)+newName+substring(infile,lengthOf(infile)-8);
+			// 	File.rename(infile,newName);
+			// } 
 		}
 
 		if(imageformat=="jpg"){
