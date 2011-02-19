@@ -102,6 +102,7 @@ function countFiles(dir) {
 
 function processFiles(dir,outputDir) {
 	list = getFileList(dir);
+	shuffle(list); // Shuffles list to stop different processes racing each other.
     for (i=0; i<list.length; i++) {
         if (endsWith(list[i], "/"))
             processFiles(""+dir+list[i], outputDir);
