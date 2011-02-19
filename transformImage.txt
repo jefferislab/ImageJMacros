@@ -77,7 +77,9 @@ if(argument=="") {
 		}
 
 		if(imageformat=="nrrd"){
+			setKeyDown("alt");
 			run("Nrrd ... ", "nrrd=["+infile+"]");
+			setKeyDown("none");
 			if(newName != "") {
 				// stem_01.nrrd -> stemv_01.nrrd
 				newName=substring(infile,0,indexOf(toLowerCase(infile),".nrrd")-4)+newName+substring(infile,lengthOf(infile)-8);
