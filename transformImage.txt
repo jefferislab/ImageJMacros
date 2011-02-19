@@ -55,7 +55,7 @@ if(argument=="") {
 				run("Flip Vertically", "stack");
 				newName=newName+"v";
 			}
-			if((operation=="r") && endsWith(toLowerCase(infile),".pic")) {
+			if((operation=="r") && nSlices>1) {
 				run("Stack Reverser");
 				newName=newName+"r";
 			}
