@@ -277,3 +277,19 @@ function processImage() {
 //	run("8-bit");
 //	run("Flip Vertically");
 }
+
+function shuffle(array) {
+   n = array.length;  // The number of items left to shuffle (loop invariant).
+   while (n > 1) {
+      k = randomInt(n);     // 0 <= k < n.
+      n--;                  // n is now the last pertinent index;
+      temp = array[n];  // swap array[n] with array[k] (does nothing if k==n).
+      array[n] = array[k];
+      array[k] = temp;
+   }
+}
+
+// returns a random number, 0 <= k < n
+function randomInt(n) {
+   return n * random();
+}
