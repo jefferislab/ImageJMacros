@@ -6,6 +6,7 @@ function trim(s) {
 }
 
 newName="";
+makeNewName=0;
 
 if(argument=="") {
 	print("Wrong number of arguments");
@@ -41,29 +42,29 @@ if(argument=="") {
 			print("operation:"+operation);
 			if(operation=="c") {
 				run("Rotate 90 Degrees Right");
-//				newName=newName+"c";
+				if(makeNewName) newName=newName+"c";
 			}
 			if(operation=="a"){ 
 				run("Rotate 90 Degrees Left");
-//				newName=newName+"a";
+				if(makeNewName) newName=newName+"a";
 			}
 			if(operation=="h"){ 
 				run("Flip Horizontally", "stack");
-				newName=newName+"h";
+				if(makeNewName) newName=newName+"h";
 			}
 			if(operation=="v"){ 
 				run("Flip Vertically", "stack");
-				newName=newName+"v";
+				if(makeNewName) newName=newName+"v";
 			}
 			if((operation=="r") && nSlices>1) {
 				run("Stack Reverser");
-				newName=newName+"r";
+				if(makeNewName) newName=newName+"r";
 			}
 			if(operation=="f"){ 
-//				newName=newName+"f";
 				args="angle=180 grid=1 interpolation=None";
 				if(nSlices>1) args=args+" stack";
 				run("Rotate... ", args);
+				if(makeNewName) newName=newName+"f";
 			}
 		}
 
