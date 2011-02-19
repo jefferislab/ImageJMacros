@@ -60,8 +60,10 @@ if(argument=="") {
 				newName=newName+"r";
 			}
 			if(operation=="f"){ 
-				run("Rotate... ", "angle=180 grid=1 interpolation=None stack");
 //				newName=newName+"f";
+				args="angle=180 grid=1 interpolation=None";
+				if(nSlices>1) args=args+" stack";
+				run("Rotate... ", args);
 			}
 		}
 
