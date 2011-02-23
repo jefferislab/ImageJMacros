@@ -101,8 +101,7 @@ function processFiles(dir,outputDir) {
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
 		path = dir+file;
-		run("Bio-Formats Windowless Importer", "open=["+path+"]");
-		run("Split Channels");
+		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
 		noImages=3;
 		for(i=noImages;i>0;i--){
 			processImage();
