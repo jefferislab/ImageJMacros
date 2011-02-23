@@ -100,7 +100,20 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		// Check if output already exists
+		c1outpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
+		if(File.exists(c1outpath)){
+			print("Skipping file: " + file + " since " + c1outpath + " already exists");
+			return;
+		}
 		path = dir+file;
+		// Check if someone is already working on this
+		lockpath=path+'.lock';
+		if(File.exists(lockpath)){
+			print("Skipping file: " + file + " since someone else is working on it");
+			return;
+		}
+
 		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
 		noImages=3;
 		for(i=noImages;i>0;i--){
@@ -113,7 +126,8 @@ function processFile(dir,outputDir,file) {
 				setKeyDown("none");
 			}
 			close();
-		} 
+		}
+		File.delete(lockpath);
 	}
 }
 
