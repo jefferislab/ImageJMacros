@@ -103,7 +103,6 @@ function processFile(dir,outputDir,file) {
 		path = dir+file;
 		run("Bio-Formats Windowless Importer", "open=["+path+"]");
 		run("Split Channels");
-		title=getTitle();
 		noImages=3;
 		for(i=noImages;i>0;i--){
 			processImage();
