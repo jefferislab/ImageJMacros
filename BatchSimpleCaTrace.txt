@@ -4,30 +4,30 @@
 // This next bit Aaron has been working on starting on 14 March 2011
 requires("1.42k"); 
 file = getArgument;
-arg = split(file,",");
-open("");
+// arg = split(file,",");
+open(file);
 current=getTitle();
 //print(current);  //error checking
-current=substring(current,(0),lengthOf(current)-4);
+current=substring(current,0,lengthOf(current)-4);
 // print(current);  //error checking
 run("Reslice [/]...", "output=1.000 start=Top rotate avoid");
-run("Z Project...", "start=1 stop=127 projection=[Average Intensity]");
+run("Z Project...", " projection=[Average Intensity]");
 run("Select All");
 run("Plot Profile");
 
 //adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
+outfile="/Users/aostrov/Desktop/" +current+".csv"
+if(File.exists(outfile)) exit("File exists");
+	
+f=File.open(outfile);
+	
+print(f, "Time, F");
 Plot.getValues(x, y);
  for (i=0; i<x.length; i++)
-      print(x[i], y[i]);
-selectWindow("Log");
-saveAs("Text", "/Users/aostrov/Desktop/" +current);
-
-//ugly hack for saving the list as a 'csv' so R can read it correctly, 
-//but it works, at least on Aaron's laptop
-File.rename("/Users/aostrov/Desktop/"+current+".txt" , "/Users/aostrov/Desktop/"+current+".csv");
+      print(f, x[i]+","+y[i]);
+File.close(f);
 
 //keeping things clean
-run("Close");
 run("Close");
 run("Close");
 run("Close");
