@@ -1,79 +1,34 @@
-// "BatchConvertStacksToZProjJPGS"
-//
-// This macro batch processes all the .bin.gz (ie IGS format) files 
-// in a folder and any subfolders in that folder.
-// It then saves them in the Amiramesh format using the Amira_Writer plugin
-// The new file will have the name of the folder containing the "image.bin.gz" file
-// along with the suffix .am
-// ie some/image/path/image.bin.gz -> some/image/path.am
+//This macro takes an image, sets it up as a time series and plots the intensities
+//Useful for calcium imaging
 
-// (Slightly) Adapted by Greg Jefferis from code at
-// http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
+// This next bit Aaron has been working on starting on 14 March 2011
+requires("1.42k"); 
+file = getArgument;
+arg = split(file,",");
+open("");
+current=getTitle();
+//print(current);  //error checking
+current=substring(current,(0),lengthOf(current)-4);
+// print(current);  //error checking
+run("Reslice [/]...", "output=1.000 start=Top rotate avoid");
+run("Z Project...", "start=1 stop=127 projection=[Average Intensity]");
+run("Select All");
+run("Plot Profile");
 
-// jefferis@gmail.com
+//adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
+Plot.getValues(x, y);
+ for (i=0; i<x.length; i++)
+      print(x[i], y[i]);
+selectWindow("Log");
+saveAs("Text", "/Users/aostrov/Desktop/" +current);
 
-// v 0.1 2007-11-07
-// - first version in response to a request from Jai
+//ugly hack for saving the list as a 'csv' so R can read it correctly, 
+//but it works, at least on Aaron's laptop
+File.rename("/Users/aostrov/Desktop/"+current+".txt" , "/Users/aostrov/Desktop/"+current+".csv");
 
-requires("1.33s"); 
-dir = getDirectory("Choose a stacks directory");
-outputDir = getDirectory("Choose output directory");
-setBatchMode(true);
-count = 0;
-countFiles(dir);
-print("Total files: "+count);
-n = 0;
-processFiles(dir, outputDir);
-
-function countFiles(dir) {
-		list = getFileList(dir);
-	for (i=0; i<list.length; i++) {
-		if (endsWith(list[i], "/"))
-            countFiles(""+dir+list[i]);
-	else
-		count++;
-	}
-}
-
-function processFiles(dir,outputDir) {
-	list = getFileList(dir);
-    for (i=0; i<list.length; i++) {
-        if (endsWith(list[i], "/")){
-			if(File.exists(""+outputDir+list[i]) != 1){
-				File.makeDirectory(""+outputDir+list[i]);
-			}
-            processFiles(""+dir+list[i], ""+outputDir+list[i]);
-        } else {
-		showProgress(n++, count);
-              processFile(dir,outputDir,list[i]);
-        }
-    }
-}
-
-function processFile(dir,outputDir,file) {
-	if (endsWith(file,".tif")) {
-		newpath=outputDir+substring(file,0,lengthOf(file)-3)+"tif";
-		if(File.exists(newpath)){
-			print("Skipping file: "+file+" since tiff already exists");
-			return;
-		}
-		path = dir+list[i];
-		open(path);
-		processImage(dir);
-		saveAs("Tiff", newpath);
-		close();
-		close();
-		close();
-	}
-}
-
-function processImage(dir) {
-	// run("Fire");
-	run("Reslice [/]...", "output=1.000 start=Top avoid");
-	run("Rotate 90 Degrees Left");
-	run("Z Project...", "start=1 stop=128 projection=[Average Intensity]");
-	// run("ROI Manager...");
-	// roiManager("Open", dir+"ROI.roi")
-	// roiManager("Select", 0);
-	// run("Plot Profile");
-}
+//keeping things clean
+run("Close");
+run("Close");
+run("Close");
+run("Close");
+run("Close");
