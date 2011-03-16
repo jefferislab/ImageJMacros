@@ -6,7 +6,7 @@
 requires("1.42k"); 
 file = getArgument;
 arg = split(file,","); //useful if I want to start having multiple arguements 
-open(arg[1]);
+open(arg[0]);
 current=getTitle();
 
 //print(current);  //error checking
@@ -19,7 +19,7 @@ run("Select All");
 run("Plot Profile");
 
 //adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
-outfile=arg[0] +current+".csv"
+outfile=arg[1] +current+".csv"
 if(File.exists(outfile)) exit("File exists");
 	
 f=File.open(outfile);
