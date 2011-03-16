@@ -1,22 +1,25 @@
 //This macro takes an image, sets it up as a time series and plots the intensities
 //Useful for calcium imaging
+// Adapted with Greg on 14 March 2011
 
 // This next bit Aaron has been working on starting on 14 March 2011
 requires("1.42k"); 
 file = getArgument;
-// arg = split(file,",");
-open(file);
+arg = split(file,","); //useful if I want to start having multiple arguements 
+open(arg[1]);
 current=getTitle();
+
 //print(current);  //error checking
 current=substring(current,0,lengthOf(current)-4);
 // print(current);  //error checking
+
 run("Reslice [/]...", "output=1.000 start=Top rotate avoid");
 run("Z Project...", " projection=[Average Intensity]");
 run("Select All");
 run("Plot Profile");
 
 //adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
-outfile="/Users/aostrov/Desktop/" +current+".csv"
+outfile=arg[0] +current+".csv"
 if(File.exists(outfile)) exit("File exists");
 	
 f=File.open(outfile);
