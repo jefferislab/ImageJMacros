@@ -101,10 +101,14 @@ function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
 		path = dir+file;
 		run("Bio-Formats Windowless Importer", "open=["+path+"]");
-		run("Split Channels");
+		if(nImages==1){
+			run("Split Channels");
+		}
+		if(nImages!=3){
+			IJ.log("Skipping "+file+" since there appear to be "+nImages+" channels and I was expecting 3.");
+		}
 		title=getTitle();
-		noImages=3;
-		for(i=noImages;i>0;i--){
+		for(i=nImages;i>0;i--){
 			processImage();
 			if(outputformat=='pic'){
 				run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+i+".pic]");
