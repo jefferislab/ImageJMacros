@@ -26,43 +26,44 @@ for(l=0;l<xmllines.length;l++){
 }
 
 if (channelsfound==1) {
-	run("Bio-Formats Importer", "open="+dir+firstStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+firstStack);
 	img1name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+secondStack);
 	img2name=getTitle();
 
 
 	print("stitching " +img1name+ " and " +img2name);
 	run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
-	// run("3D Stitching", "["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_C1-AACM15-2.lsm_C2-AACM15-2.lsm apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=C1-AACM15-2.lsm second_image_stack_1=C1-AACM15-3.lsm fused_image_name_1=[Fused Channel 2]");
-	// run("3D Stitching", "first_stack=C2-AACM15-2.lsm use_channel_for_first=[Red, Green and Blue] second_stack=C2-AACM15-3.lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_C1-AACM15-2.lsm_C2-AACM15-2.lsm apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=C1-AACM15-2.lsm second_image_stack_1=C1-AACM15-3.lsm fused_image_name_1=[Fused Channel 2]");
-	saveAs("Tiff", outdir+finalName+"_stitched.tif");
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="outdir+finalName+"_stitched.nrrd");
+	setKeyDown("none");
+
 	close();
 	close();
 	close();
 }
 
 if(channelsfound==2) {
-	run("Bio-Formats Importer", "open="+dir+firstStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+firstStack);
 	img1name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+secondStack);
 	img2name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+firstStackCh2+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+firstStackCh2);
 	img1Ch2name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStackCh2+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
+	run("Nrrd ...", "load="+dir+secondStackCh2);
 	img2Ch2name=getTitle();
 
 
 	print("stitching " +img1name+ " and " +img2name);
-	// run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
 	run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+" apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+img1Ch2name+"] second_image_stack_1=["+img2Ch2name+"] fused_image_name_1="+finalNameC2);
-	// run("3D Stitching", "first_stack=YYYY1-1_01.pic use_channel_for_first=[Red, Green and Blue] second_stack=YYYY1-2_01.pic use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_YYYY1-1_02.pic_YYYY1-1_01.pic apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=YYYY1-1_02.pic second_image_stack_1=YYYY1-2_02.pic fused_image_name_1=[Fused Channel 2]");
 	selectWindow(finalName);
-	run("Biorad ...", "biorad="+outdir+finalName+"_stitched.pic");
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"_stitched.nrrd");
+	setKeyDown("none");
 	selectWindow(finalNameC2);
-	run("Biorad ...", "biorad="+outdir+finalNameC2+"_stitched.pic");
-	// run("Biorad ...", "biorad=/Volumes/JData/JPeople/Aaron/StitchTest/YYYY1-2_01-1.PIC");
-	// saveAs("Tiff", outdir+finalName+"_stitched.tif");
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalNameC2+"_stitched.nrrd");
+	setKeyDown("none");
 	close();
 	close();
 	close();
