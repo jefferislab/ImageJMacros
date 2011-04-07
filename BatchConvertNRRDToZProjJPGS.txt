@@ -84,5 +84,5 @@ function processFile(dir,outputDir,file) {
 function processImage() {
 	run("Z Project...", "projection=[Standard Deviation]");
 	run("8-bit");
-	run("Flip Vertically");
+	//run("Flip Vertically");
 }

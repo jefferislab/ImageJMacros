@@ -87,6 +87,7 @@ function countFiles(dir) {
 
 function processFiles(dir,outputDir) {
 	list = getFileList(dir);
+	shuffle(list);
     for (i=0; i<list.length; i++) {
         if (endsWith(list[i], "/"))
             processFiles(""+dir+list[i], outputDir);
@@ -99,16 +100,23 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		// Check if output already exists
+		c1outpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
+		if(File.exists(c1outpath)){
+			print("Skipping file: " + file + " since " + c1outpath + " already exists");
+			return;
+		}
 		path = dir+file;
-		run("Bio-Formats Windowless Importer", "open=["+path+"]");
-		if(nImages==1){
-			run("Split Channels");
+		// Check if someone is already working on this
+		lockpath=path+'.lock';
+		if(File.exists(lockpath)){
+			print("Skipping file: " + file + " since someone else is working on it");
+			return;
 		}
-		if(nImages!=3){
-			IJ.log("Skipping "+file+" since there appear to be "+nImages+" channels and I was expecting 3.");
-		}
-		title=getTitle();
-		for(i=nImages;i>0;i--){
+
+		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
+		noImages=3;
+		for(i=noImages;i>0;i--){
 			processImage();
 			if(outputformat=='pic'){
 				run("Biorad ...","biorad=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+i+".pic]");
@@ -118,7 +126,8 @@ function processFile(dir,outputDir,file) {
 				setKeyDown("none");
 			}
 			close();
-		} 
+		}
+		File.delete(lockpath);
 	}
 }
 
@@ -127,4 +136,20 @@ function processImage() {
 //	run("Z Project...", "projection=[Standard Deviation]");
 //	run("8-bit");
 //	run("Flip Vertically");
+}
+
+function shuffle(array) {
+   n = array.length;  // The number of items left to shuffle (loop invariant).
+   while (n > 1) {
+      k = randomInt(n);     // 0 <= k < n.
+      n--;                  // n is now the last pertinent index;
+      temp = array[n];  // swap array[n] with array[k] (does nothing if k==n).
+      array[n] = array[k];
+      array[k] = temp;
+   }
+}
+
+// returns a random number, 0 <= k < n
+function randomInt(n) {
+   return n * random();
 }
