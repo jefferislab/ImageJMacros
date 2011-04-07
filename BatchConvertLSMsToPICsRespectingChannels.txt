@@ -175,6 +175,12 @@ function getLsmChannelWavelengths(dir,file) {
 			}			
 		}
 	}
+
+	if( (channelsfound) != noImages){
+		print("Skipping "+lsmpath+"\nNumber of channels extracted from metadata ("+channelsfound+") not equal to channels from lsm ("+noImages+")");
+		return -1;
+	}
+
 	
 	// Get rid of any elements in the array where we didn't find a channel 
 	//(e.g. last array element when 3 channels present)
@@ -192,6 +198,11 @@ function processFile(dir,outputDir,file) {
 		}
 
 		lsmchannels=getLsmChannelWavelengths(dir,file);
+		if (lsmchannels==-1) return;
+		//by putting error checking to see if (channelsfound) != noImages in the previous 
+		//function, if the script has gotten to this point we know that they are equal
+		noImages=lsmchannels.length;
+		
 		if(AssumeChannelsInWavelengthOrder && lsmchannels.length==0 ){
 			// FIXME - figure out how many channels there are in absence of xml metadata
 			// Dummy wavelenths
@@ -241,10 +252,6 @@ function processFile(dir,outputDir,file) {
 		
 		// Check that we have the same number of channels from the metadata file
 		// and the lsm file. 
-		if( (channelsfound) != noImages){
-			print("Skipping "+lsmpath+"\nNumber of channels extracted from metadata ("+channelsfound+") not equal to channels from lsm ("+noImages+")");
-			return;
-		}
 		
 		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
 //		title=getTitle();
