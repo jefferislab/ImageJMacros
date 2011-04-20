@@ -32,7 +32,7 @@ if(argument=="") {
 			run("Nrrd ...", "load=["+infile+"]");
 		}
 		if(endsWith(toLowerCase(infile),".jpg")){
-			imageformat="jpg"
+			imageformat="jpg";
 			open(infile);
 		}
 		while(lengthOf(transforms)!=0) {
