@@ -80,12 +80,61 @@ if(channelsfound==2) {
 	setKeyDown("alt");
 	run("Nrrd ... ", "nrrd="+outdir+finalName+"_stitched.nrrd");
 	setKeyDown("none");
+
 	selectWindow(finalNameC2);
 	setKeyDown("alt");
 	run("Nrrd ... ", "nrrd="+outdir+finalNameC2+"_stitched.nrrd");
 	setKeyDown("none");
+
 	close();
 	close();
 	close();
 	close();
+}
+
+if(channelsfound==3) {
+	run("Nrrd ...", "load="+dir+firstStack);
+	img1name=getTitle();
+	run("Nrrd ...", "load="+dir+secondStack);
+	img2name=getTitle();
+	run("Nrrd ...", "load="+dir+firstStackCh2);
+	img1Ch2name=getTitle();
+	run("Nrrd ...", "load="+dir+secondStackCh2);
+	img2Ch2name=getTitle();
+	run("Nrrd ...", "load="+dir+firstStackCh3);
+	img1Ch3name=getTitle();
+	run("Nrrd ...", "load="+dir+secondStackCh3);
+	img2Ch3name=getTitle();
+
+
+	print("stitching " +img1name+ " and " +img2name);
+
+	run("3D Stitching", "first_stack=["+img1name+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+
+	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
+	+finalName+" apply_to_other_channels number_of_other_channels=2 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+img1Ch2name+
+	"] second_image_stack_1=["+img2Ch2name+"] fused_image_name_1="+finalNameC2+
+	"first_image_stack_2=["+img1Ch3name+"] second_image_stack_2=["+img2Ch3name+"] fused_image_name_2="+finalNameC3);
+	
+	selectWindow(finalName);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"_stitched.nrrd");
+	setKeyDown("none");
+
+	selectWindow(finalNameC2);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalNameC2+"_stitched.nrrd");
+	setKeyDown("none");
+
+	selectWindow(finalNameC3);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalNameC3+"_stitched.nrrd");
+	setKeyDown("none");
+
+	close();
+	close();
+	close();
+	close();
+	close();
+	
 }
