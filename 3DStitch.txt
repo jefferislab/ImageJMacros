@@ -1,18 +1,14 @@
 file = getArgument;
 dir="";
 outputDir="";
-arg = newArray(9);
+// arg = newArray(9);
 arg = split(file,",");
 print(file);
 dir = arg[0];
 outdir = arg[1];
-firstStack = arg[2];
-secondStack = arg[3];
-firstStackCh2 = arg[4];
-secondStackCh2 = arg[5];
-finalName = arg[6];
-finalNameC2 = arg[7];
-xmlpath=arg[8];
+Stacks = arg[2];
+finalNames = arg[3];
+xmlpath = arg[4];
 
 xmlstr=File.openAsString(xmlpath);
 xmllines=split(xmlstr,"\n");
