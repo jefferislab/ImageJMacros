@@ -7,7 +7,7 @@ print(file);
 dir = arg[0];
 outdir = arg[1];
 Stacks = arg[2];
-finalNames = arg[3];
+finalName = arg[3];
 xmlpath = arg[4];
 
 stackSplits = split(Stacks,":");
@@ -17,11 +17,6 @@ img1Ch2name = stackSplits[2];
 img2Ch2name = stackSplits[3];
 img1Ch3name = stackSplits[4];
 img2Ch3name = stackSplits[5];
-
-finalSplit = split(finalNames,":");
-finalName = finalSplit[0];
-finalNameC2 = finalSplit[1];
-finalNameC3 = finalSplit[2];
 
 xmlstr=File.openAsString(xmlpath);
 xmllines=split(xmlstr,"\n");
