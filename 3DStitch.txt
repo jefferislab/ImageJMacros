@@ -10,14 +10,6 @@ Stacks = arg[2];
 finalName = arg[3];
 xmlpath = arg[4];
 
-stackSplits = split(Stacks,":");
-img1name = stackSplits[0];
-img2name = stackSplits[1];
-img1Ch2name = stackSplits[2];
-img2Ch2name = stackSplits[3];
-img1Ch3name = stackSplits[4];
-img2Ch3name = stackSplits[5];
-
 xmlstr=File.openAsString(xmlpath);
 xmllines=split(xmlstr,"\n");
 channelsfound=0;
@@ -30,6 +22,10 @@ for(l=0;l<xmllines.length;l++){
 }
 
 if (channelsfound==1) {
+	stackSplits = split(Stacks,":");
+	img1name = stackSplits[0];
+	img2name = stackSplits[1];
+
 	run("Nrrd ...", "load="+dir+firstStack);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
@@ -53,6 +49,12 @@ if (channelsfound==1) {
 }
 
 if(channelsfound==2) {
+	stackSplits = split(Stacks,":");
+	img1name = stackSplits[0];
+	img2name = stackSplits[1];
+	img1Ch2name = stackSplits[2];
+	img2Ch2name = stackSplits[3];
+
 	run("Nrrd ...", "load="+dir+firstStack);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
@@ -88,6 +90,14 @@ if(channelsfound==2) {
 }
 
 if(channelsfound==3) {
+	stackSplits = split(Stacks,":");
+	img1name = stackSplits[0];
+	img2name = stackSplits[1];
+	img1Ch2name = stackSplits[2];
+	img2Ch2name = stackSplits[3];
+	img1Ch3name = stackSplits[4];
+	img2Ch3name = stackSplits[5];
+
 	run("Nrrd ...", "load="+dir+firstStack);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
