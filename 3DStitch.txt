@@ -26,7 +26,7 @@ if (channelsfound==1) {
 	img1name = stackSplits[0];
 	img2name = stackSplits[1];
 
-	run("Nrrd ...", "load="+dir+firstStack);
+	run("Nrrd ...", "load="+dir+img1name);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
 	img2name=getTitle();
@@ -55,7 +55,7 @@ if(channelsfound==2) {
 	img1Ch2name = stackSplits[2];
 	img2Ch2name = stackSplits[3];
 
-	run("Nrrd ...", "load="+dir+firstStack);
+	run("Nrrd ...", "load="+dir+img1name);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
 	img2name=getTitle();
@@ -98,7 +98,7 @@ if(channelsfound==3) {
 	img1Ch3name = stackSplits[4];
 	img2Ch3name = stackSplits[5];
 
-	run("Nrrd ...", "load="+dir+firstStack);
+	run("Nrrd ...", "load="+dir+img1name);
 	img1name=getTitle();
 	run("Nrrd ...", "load="+dir+secondStack);
 	img2name=getTitle();
