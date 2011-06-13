@@ -21,6 +21,14 @@ for(l=0;l<xmllines.length;l++){
 	}
 }
 
+// A simple while loop for opening up the appropriate number of nrrds
+// 
+// x=0;
+// while (x<stackSplits.length){
+// 	run("Nrrd ...", "load="+dir+stackSplits[x]);
+// 	x++;
+// }
+
 if (channelsfound==1) {
 	stackSplits = split(Stacks,":");
 	img1name = stackSplits[0];
