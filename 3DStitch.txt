@@ -22,28 +22,22 @@ for(l=0;l<xmllines.length;l++){
 }
 
 // A simple while loop for opening up the appropriate number of nrrds
-// 
-// x=0;
-// while (x<stackSplits.length){
-// 	run("Nrrd ...", "load="+dir+stackSplits[x]);
-// 	x++;
-// }
+
+stackSplits = split(Stacks,":");
+x=0;
+while (x<stackSplits.length){
+	run("Nrrd ...", "load="+dir+stackSplits[x]);
+	x++;
+}
 
 if (channelsfound==1) {
-	stackSplits = split(Stacks,":");
-	img1name = stackSplits[0];
-	img2name = stackSplits[1];
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
 
-	run("Nrrd ...", "load="+dir+img1name);
-	img1name=getTitle();
-	run("Nrrd ...", "load="+dir+img2name);
-	img2name=getTitle();
-
-
-	print("stitching " +img1name+ " and " +img2name);
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
 	
-	run("3D Stitching", "first_stack=["+img1name+
-	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
 	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
 	+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
 	
@@ -57,30 +51,20 @@ if (channelsfound==1) {
 }
 
 if(channelsfound==2) {
-	stackSplits = split(Stacks,":");
-	img1name = stackSplits[0];
-	img2name = stackSplits[1];
-	img1Ch2name = stackSplits[2];
-	img2Ch2name = stackSplits[3];
-
 	finalName02=finalName+"02";
 	
-	run("Nrrd ...", "load="+dir+img1name);
-	img1name=getTitle();
-	run("Nrrd ...", "load="+dir+img2name);
-	img2name=getTitle();
-	run("Nrrd ...", "load="+dir+img1Ch2name);
-	img1Ch2name=getTitle();
-	run("Nrrd ...", "load="+dir+img2Ch2name);
-	img2Ch2name=getTitle();
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
+	run("Nrrd ...", "load="+dir+stackSplits[2]);
+	run("Nrrd ...", "load="+dir+stackSplits[3]);
 
-	print("stitching " +img1name+ " and " +img2name);
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
 
-	run("3D Stitching", "first_stack=["+img1name+
-	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
 	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
-	+finalName+" apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+img1Ch2name+
-	"] second_image_stack_1=["+img2Ch2name+"] fused_image_name_1="+finalName02);
+	+finalName+" apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+stackSplits[2]+
+	"] second_image_stack_1=["+stackSplits[3]+"] fused_image_name_1="+finalName02);
 	
 	selectWindow(finalName);
 	setKeyDown("alt");
@@ -99,39 +83,24 @@ if(channelsfound==2) {
 }
 
 if(channelsfound==3) {
-	stackSplits = split(Stacks,":");
-	img1name = stackSplits[0];
-	img2name = stackSplits[1];
-	img1Ch2name = stackSplits[2];
-	img2Ch2name = stackSplits[3];
-	img1Ch3name = stackSplits[4];
-	img2Ch3name = stackSplits[5];
-
 	finalName02=finalName+"02";
 	finalName03=finalName+"03";
 	
-	run("Nrrd ...", "load="+dir+img1name);
-	img1name=getTitle();
-	run("Nrrd ...", "load="+dir+img2name);
-	img2name=getTitle();
-	run("Nrrd ...", "load="+dir+img1Ch2name);
-	img1Ch2name=getTitle();
-	run("Nrrd ...", "load="+dir+img2Ch2name);
-	img2Ch2name=getTitle();
-	run("Nrrd ...", "load="+dir+img1Ch3name);
-	img1Ch3name=getTitle();
-	run("Nrrd ...", "load="+dir+img2Ch3name);
-	img2Ch3name=getTitle();
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
+	run("Nrrd ...", "load="+dir+stackSplits[2]);
+	run("Nrrd ...", "load="+dir+stackSplits[3]);
+	run("Nrrd ...", "load="+dir+stackSplits[4]);
+	run("Nrrd ...", "load="+dir+stackSplits[5]);
 
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
 
-	print("stitching " +img1name+ " and " +img2name);
-
-	run("3D Stitching", "first_stack=["+img1name+
-	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
 	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
-	+finalName+" apply_to_other_channels number_of_other_channels=2 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+img1Ch2name+
-	"] second_image_stack_1=["+img2Ch2name+"] fused_image_name_1="+finalName02+
-	"first_image_stack_2=["+img1Ch3name+"] second_image_stack_2=["+img2Ch3name+"] fused_image_name_2="+finalName03);
+	+finalName+" apply_to_other_channels number_of_other_channels=2 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+stackSplits[2]+
+	"] second_image_stack_1=["+stackSplits[3]+"] fused_image_name_1="+stackSplits[4]+
+	"first_image_stack_2=["+stackSplits[5]+"] second_image_stack_2=["+stackSplits[6]+"] fused_image_name_2="+finalName03);
 	
 	selectWindow(finalName);
 	setKeyDown("alt");
