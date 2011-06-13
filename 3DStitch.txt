@@ -63,7 +63,7 @@ if(channelsfound==2) {
 	img1Ch2name = stackSplits[2];
 	img2Ch2name = stackSplits[3];
 
-	finalName02=finalName+"02"
+	finalName02=finalName+"02";
 	
 	run("Nrrd ...", "load="+dir+img1name);
 	img1name=getTitle();
@@ -107,8 +107,8 @@ if(channelsfound==3) {
 	img1Ch3name = stackSplits[4];
 	img2Ch3name = stackSplits[5];
 
-	finalName02=finalName+"02"
-	finalName03=finalName+"03"
+	finalName02=finalName+"02";
+	finalName03=finalName+"03";
 	
 	run("Nrrd ...", "load="+dir+img1name);
 	img1name=getTitle();
