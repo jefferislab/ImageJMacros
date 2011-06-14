@@ -113,6 +113,7 @@ function processFile(dir,outputDir,file) {
 			print("Skipping file: " + file + " since someone else is working on it");
 			return;
 		}
+		File.saveString("",lockpath);
 
 		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
 		noImages=3;
