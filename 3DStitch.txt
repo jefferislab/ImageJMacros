@@ -37,7 +37,7 @@ if (channelsfound==1) {
 	run("3D Stitching", "first_stack=["+img1name+
 	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+
 	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
-	+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
+	+finalName+" number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
 	
 	setKeyDown("alt");
 	run("Nrrd ... ", "nrrd="outdir+finalName+"-stitched_01.nrrd");
