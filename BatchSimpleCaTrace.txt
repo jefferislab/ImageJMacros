@@ -21,7 +21,7 @@ if (arg.length==4){
     }
   
 	roiManager("Open", arg[2]);
-	roiManager("Select", arg[3]);
+	roiManager("Select", parseInt(arg[3]));
 }
 // run("Reslice [/]...", "output=1.000 start=Top rotate avoid");
 // run("Z Project...", " projection=[Average Intensity]");
@@ -49,4 +49,4 @@ File.close(f);
 run("Close");
 run("Close");
 run("Close");
-run("Close");
+// run("Close");
