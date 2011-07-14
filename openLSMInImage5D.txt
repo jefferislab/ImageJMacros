@@ -1,13 +1,14 @@
+// Stolen from openImagesInImage5D.txt with the minor, relevant changes
+// Gets as an argument a single file with its full path 
+
 requires("1.42k"); 
 arg = getArgument;
 
-// file="/Volumes/JData/JPeople/Sebastian/ConfocalStacks/SAHO1-1.lsm"
 open(arg);
 getDimensions(width, height, channels, slices, frames);
 run("Stack to Image5D", "3rd=ch 4th=z 3rd_dimension_size=" + channels + " 4th_dimension_size=" + slices + " assign");
 for( i=0; i<channels; i++){
 	run("Set Position", "x-position=1 y-position=1 channel="+(i+1)+" slice=" + (slices/2) + " frame=1 display=overlay");
 	resetMinAndMax();
-	// run("Set Channel Labels", i+"="+File.getName(file));
 }
 run("Set Position", "x-position=1 y-position=1 channel=1 slice=1 frame=1 display=overlay");
