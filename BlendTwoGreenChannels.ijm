@@ -12,28 +12,62 @@
 
 // Created by Greg and Philip on 11 August 2011
 
-// Choose the image stack to work with
-// Choose the high and low gain channels
-// Choose the blending parameter
+// When running interactively, expects an open image stack with at least 2 channels
+// In batch mode, expects the path to an lsm file and an exponent (e.g. in range 1-5)
 
-// run("Bio-Formats Importer", "open=[/Volumes/JData/JPeople/Philip/ConfocalImages/SF131 emission filter.lsm] color_mode=Default display_metadata display_ome-xml split_channels view=[Standard ImageJ] stack_order=Default");
+// 
 // run("Close");
 
-Dialog.create("Blend Channels");
-Dialog.addChoice("Low Gain Image:", newArray("Low"));
-Dialog.addChoice("High Gain Image:", newArray("High"));
-Dialog.addNumber("exponent (1=linear, 3-5 may be good)", 1);
-Dialog.show();
-imglo = Dialog.getChoice();
-imghi = Dialog.getChoice();
-exponent = Dialog.getNumber();
+arg = getArgument;
+if(arg=="") {
+	// get images and exponent interactively
+	Dialog.create("Blend Channels");
+	Dialog.addChoice("Low Gain Image:", newArray("Low"));
+	Dialog.addChoice("High Gain Image:", newArray("High"));
+	Dialog.addNumber("exponent (1=linear, 3-5 may be good)", 1);
+	Dialog.show();
+	imglo = Dialog.getChoice();
+	imghi = Dialog.getChoice();
+	exponent = Dialog.getNumber();
+} else {
+	args = split(getArgument,",");
+	if (args.length!=2) {
+		print("Give me 2 arguments please!")
+		exit();
+	}
+	imageFile=args[0];
+	exponent=parseFloat(args[1]);  // nb turn from string to numeric
+	print("Blending first two channels of image: "+imageFile+" with exponent "+exponent);
+	
+	// Open the image, split in and make sure we have exactly 2 channels (the first 2) left
+	imagesAlreadyOpen=nImages;
+	run("Bio-Formats Importer", "open=["+imageFile+"] color_mode=Default split_channels view=[Standard ImageJ] stack_order=Default");
+	noImages=nImages-imagesAlreadyOpen;
+	print("Finished opening image");
+
+	for(i=noImages;i>2;i--){
+		close();
+	}
+	// 2nd channel should be high gain
+	ch2id=getImageID();
+	imghi=getTitle();
+	print("ch2id="+ch2id);
+	print("imghi="+imghi);
+	// 
+	ch1id=ch2id+1;
+	selectImage(ch1id);
+	imglo=getTitle();
+	print("ch1id="+ch1id);
+	print("imglo="+imglo);
+}
+
 
 // how many slices are there?
 // convert stack to float?
 
 // select high gain image (imghi)
-selectWindow(imghi)
-zmax=nSlices-1
+selectWindow(imghi);
+zmax=nSlices-1;
 // make a blending function for high gain
 //   ... and run that
 // something like (z^a/zmax^a)*v where:
@@ -41,18 +75,20 @@ zmax=nSlices-1
 //   v is pixel value
 //   a=exponent
 // v=v*(z^a/zmax^a)"
-mathstring="code=v=v*pow(z/"+zmax+","+exponent+") stack"
+print("Transforming high gain channel");
+mathstring="code=v=v*pow(z/"+zmax+","+exponent+") stack";
 run("Macro...", mathstring);
 
 // select low gain image (imglo)
-selectWindow(imglo)
+selectWindow(imglo);
 
 // make a blending function for low gain
 //   ... and run that
-mathstring="code=v=v*(1 - pow(z/"+zmax+","+exponent+") ) stack"
-mathstring="code=v=v-v*pow(z/"+zmax+","+exponent+") stack"
+mathstring="code=v=v-v*pow(z/"+zmax+","+exponent+") stack";
+print("Transforming low gain channel");
 run("Macro...", mathstring);
 
 // Add two channels and put output somewhere
 // ... (Image Calculator)
+print("Blending channels");
 imageCalculator("Add create stack", imghi,imglo);
