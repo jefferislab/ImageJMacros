@@ -115,8 +115,9 @@ function processFile(dir,outputDir,file) {
 		}
 		File.saveString("",lockpath);
 
+		imagesAlreadyOpen=nImages;
 		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
-		noImages=3;
+		noImages=nImages-imagesAlreadyOpen;
 		for(i=noImages;i>0;i--){
 			processImage();
 			if(outputformat=='pic'){
