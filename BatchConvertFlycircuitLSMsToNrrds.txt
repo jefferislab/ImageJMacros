@@ -101,7 +101,7 @@ function processFile(dir,outputDir,file) {
 			run("Split Channels");
 		}
 		if(nImages!=3){
-			IJ.log("Skipping "+file+" since there appear to be "+nImages+" channels and I was expecting 3.");
+			IJ.log("Warning there appear to be "+nImages+" channels (rather than 3).");
 		}
 		title=getTitle();
 		for(i=nImages;i>0;i--){
