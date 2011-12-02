@@ -83,6 +83,7 @@ function countFiles(dir) {
 
 function processFiles(dir,outputDir) {
 	list = getFileList(dir);
+	shuffle(list);
     for (i=0; i<list.length; i++) {
         if (endsWith(list[i], "/"))
             processFiles(""+dir+list[i], outputDir);
@@ -95,7 +96,19 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		// Check if output already exists
+		c1outpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
+		if(File.exists(c1outpath)){
+			print("Skipping file: " + file + " since " + c1outpath + " already exists");
+			return;
+		}
 		path = dir+file;
+		// Check if someone is already working on this
+		lockpath=path+'.lock';
+		if(File.exists(lockpath)){
+			print("Skipping file: " + file + " since someone else is working on it");
+			return;
+		}
 		Ext.openImagePlus(path);
 		if(nImages==1){
 			run("Split Channels");
@@ -114,7 +127,8 @@ function processFile(dir,outputDir,file) {
 				setKeyDown("none");
 			}
 			close();
-		} 
+		}
+		File.delete(lockpath);
 	}
 }
 
@@ -123,4 +137,20 @@ function processImage() {
 //	run("Z Project...", "projection=[Standard Deviation]");
 //	run("8-bit");
 //	run("Flip Vertically");
+}
+
+function shuffle(array) {
+   n = array.length;  // The number of items left to shuffle (loop invariant).
+   while (n > 1) {
+      k = randomInt(n);     // 0 <= k < n.
+      n--;                  // n is now the last pertinent index;
+      temp = array[n];  // swap array[n] with array[k] (does nothing if k==n).
+      array[n] = array[k];
+      array[k] = temp;
+   }
+}
+
+// returns a random number, 0 <= k < n
+function randomInt(n) {
+   return n * random();
 }
