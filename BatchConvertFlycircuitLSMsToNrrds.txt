@@ -60,7 +60,7 @@ if(outputDir=="") outputDir = getDirectory("Choose output directory");
 
 // 3) Process files in the chosen directories
 // --------------------------------------
-
+run("Bio-Formats Macro Extensions"); //for headless image opening
 setBatchMode(true);
 count = 0;
 countFiles(dir);
@@ -96,7 +96,7 @@ function processFiles(dir,outputDir) {
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
 		path = dir+file;
-		run("Bio-Formats Windowless Importer", "open=["+path+"]");
+		Ext.openImagePlus(path);
 		if(nImages==1){
 			run("Split Channels");
 		}
