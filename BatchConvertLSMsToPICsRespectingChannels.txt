@@ -27,7 +27,7 @@ outputDir=""
 nc82channel=2 // => 2nd channel in increasing wavelength order (normally 561 excitation line)
 outputformat="pic" // or nrrd
 // if xml is missing assumes input channels are in wavelength order
-AssumeChannelsInWavelengthOrder=1
+AssumeChannelsInWavelengthOrder=0
 
 // 1) Check what arguments we've received 
 // --------------------------------------

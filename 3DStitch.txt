@@ -1,18 +1,14 @@
 file = getArgument;
 dir="";
 outputDir="";
-arg = newArray(9);
+// arg = newArray(9);
 arg = split(file,",");
 print(file);
 dir = arg[0];
 outdir = arg[1];
-firstStack = arg[2];
-secondStack = arg[3];
-firstStackCh2 = arg[4];
-secondStackCh2 = arg[5];
-finalName = arg[6];
-finalNameC2 = arg[7];
-xmlpath=arg[8];
+Stacks = arg[2];
+finalName = arg[3];
+xmlpath = arg[4];
 
 xmlstr=File.openAsString(xmlpath);
 xmllines=split(xmlstr,"\n");
@@ -25,46 +21,106 @@ for(l=0;l<xmllines.length;l++){
 	}
 }
 
+// A simple while loop for opening up the appropriate number of nrrds
+
+stackSplits = split(Stacks,":");
+x=0;
+while (x<stackSplits.length){
+	run("Nrrd ...", "load="+dir+stackSplits[x]);
+	x++;
+}
+
 if (channelsfound==1) {
-	run("Bio-Formats Importer", "open="+dir+firstStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img1name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img2name=getTitle();
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
 
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
+	
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
+	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
+	+finalName+" number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
+	
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="outdir+finalName+"-stitched_01.nrrd");
+	setKeyDown("none");
 
-	print("stitching " +img1name+ " and " +img2name);
-	run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
-	// run("3D Stitching", "["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_C1-AACM15-2.lsm_C2-AACM15-2.lsm apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=C1-AACM15-2.lsm second_image_stack_1=C1-AACM15-3.lsm fused_image_name_1=[Fused Channel 2]");
-	// run("3D Stitching", "first_stack=C2-AACM15-2.lsm use_channel_for_first=[Red, Green and Blue] second_stack=C2-AACM15-3.lsm use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_C1-AACM15-2.lsm_C2-AACM15-2.lsm apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=C1-AACM15-2.lsm second_image_stack_1=C1-AACM15-3.lsm fused_image_name_1=[Fused Channel 2]");
-	saveAs("Tiff", outdir+finalName+"_stitched.tif");
 	close();
 	close();
 	close();
 }
 
 if(channelsfound==2) {
-	run("Bio-Formats Importer", "open="+dir+firstStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img1name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStack+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img2name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+firstStackCh2+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img1Ch2name=getTitle();
-	run("Bio-Formats Importer", "open="+dir+secondStackCh2+" autoscale rgb_colorize split_channels view=[Standard ImageJ] stack_order=Default");
-	img2Ch2name=getTitle();
+	finalName02=finalName+"02";
+	
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
+	run("Nrrd ...", "load="+dir+stackSplits[2]);
+	run("Nrrd ...", "load="+dir+stackSplits[3]);
 
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
 
-	print("stitching " +img1name+ " and " +img2name);
-	// run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+"stitched number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
-	run("3D Stitching", "first_stack=["+img1name+"] use_channel_for_first=[Red, Green and Blue] second_stack=["+img2name+"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="+finalName+" apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+img1Ch2name+"] second_image_stack_1=["+img2Ch2name+"] fused_image_name_1="+finalNameC2);
-	// run("3D Stitching", "first_stack=YYYY1-1_01.pic use_channel_for_first=[Red, Green and Blue] second_stack=YYYY1-2_01.pic use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name=Fused_YYYY1-1_02.pic_YYYY1-1_01.pic apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=YYYY1-1_02.pic second_image_stack_1=YYYY1-2_02.pic fused_image_name_1=[Fused Channel 2]");
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
+	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
+	+finalName+" apply_to_other_channels number_of_other_channels=1 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+stackSplits[2]+
+	"] second_image_stack_1=["+stackSplits[3]+"] fused_image_name_1="+finalName02);
+	
 	selectWindow(finalName);
-	run("Biorad ...", "biorad="+outdir+finalName+"_stitched.pic");
-	selectWindow(finalNameC2);
-	run("Biorad ...", "biorad="+outdir+finalNameC2+"_stitched.pic");
-	// run("Biorad ...", "biorad=/Volumes/JData/JPeople/Aaron/StitchTest/YYYY1-2_01-1.PIC");
-	// saveAs("Tiff", outdir+finalName+"_stitched.tif");
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_01.nrrd");
+	setKeyDown("none");
+
+	selectWindow(finalName02);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_02.nrrd");
+	setKeyDown("none");
+
 	close();
 	close();
 	close();
 	close();
+}
+
+if(channelsfound==3) {
+	finalName02=finalName+"02";
+	finalName03=finalName+"03";
+	
+	run("Nrrd ...", "load="+dir+stackSplits[0]);
+	run("Nrrd ...", "load="+dir+stackSplits[1]);
+	run("Nrrd ...", "load="+dir+stackSplits[2]);
+	run("Nrrd ...", "load="+dir+stackSplits[3]);
+	run("Nrrd ...", "load="+dir+stackSplits[4]);
+	run("Nrrd ...", "load="+dir+stackSplits[5]);
+
+	print("stitching " +stackSplits[0]+ " and " +stackSplits[1]);
+
+	run("3D Stitching", "first_stack=["+stackSplits[0]+
+	"] use_channel_for_first=[Red, Green and Blue] second_stack=["+stackSplits[1]+
+	"] use_channel_for_second=[Red, Green and Blue] use_windowing peaks=5 create_fused_image fusion_method=[Linear Blending] fusion=1.50 fused_image_name="
+	+finalName+" apply_to_other_channels number_of_other_channels=2 compute_overlap x=0 y=0 z=0 first_image_stack_1=["+stackSplits[2]+
+	"] second_image_stack_1=["+stackSplits[3]+"] fused_image_name_1="+stackSplits[4]+
+	"first_image_stack_2=["+stackSplits[5]+"] second_image_stack_2=["+stackSplits[6]+"] fused_image_name_2="+finalName03);
+	
+	selectWindow(finalName);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_01.nrrd");
+	setKeyDown("none");
+
+	selectWindow(finalName02);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_02.nrrd");
+	setKeyDown("none");
+
+	selectWindow(finalName03);
+	setKeyDown("alt");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_03.nrrd");
+	setKeyDown("none");
+
+	close();
+	close();
+	close();
+	close();
+	close();
+	
 }

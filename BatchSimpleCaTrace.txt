@@ -13,6 +13,14 @@ current=getTitle();
 current=substring(current,0,lengthOf(current)-4);
 // print(current);  //error checking
 
+//adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
+if (arg.length==4){
+	outfile=arg[1] +current+ "_roi-" +arg[3]+ ".csv";
+} else{
+	outfile=arg[1] +current+ "_roi-none.csv";
+}
+if(File.exists(outfile)) exit("File exists");
+
 if (arg.length==4){
 	// cribbed from http://imagej.nih.gov/ij/macros/ROI_Manager_Stack_Demo.txt
 	if (isOpen("ROI Manager")) {
@@ -21,21 +29,11 @@ if (arg.length==4){
     }
   
 	roiManager("Open", arg[2]);
-	roiManager("Select", arg[3]);
+	roiManager("Select", parseInt(arg[3]));
 }
-run("Reslice [/]...", "output=1.000 start=Top rotate avoid");
-run("Z Project...", " projection=[Average Intensity]");
-run("Select All");
-run("Plot Profile");
 
-//adapted from http://rsb.info.nih.gov/ij/macros/examples/PlotGetValuesDemo.txt
-if (arg.length==4){
-	outfile=arg[1] +current+ "_roi-" +arg[3]+ ".csv";
-} else{
-	outfile=arg[1] +current+ ".csv";
-}
-if(File.exists(outfile)) exit("File exists");
-	
+run("Plot Z-axis Profile");
+
 f=File.open(outfile);
 	
 print(f, "Time, F");
@@ -48,4 +46,4 @@ File.close(f);
 run("Close");
 run("Close");
 run("Close");
-run("Close");
+// run("Close");
