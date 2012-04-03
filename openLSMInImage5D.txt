@@ -12,3 +12,4 @@ for( i=0; i<channels; i++){
 	resetMinAndMax();
 }
 run("Set Position", "x-position=1 y-position=1 channel=1 slice=1 frame=1 display=overlay");
+run("Set Channel Display", "channel=1 display_in_overlay display_gray");
