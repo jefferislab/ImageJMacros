@@ -42,7 +42,7 @@ if (channelsfound==1) {
 	+finalName+" number_of_other_channels=1 compute_overlap x=0 y=0 z=0");
 	
 	setKeyDown("alt");
-	run("Nrrd ... ", "nrrd="outdir+finalName+"-stitched_01.nrrd");
+	run("Nrrd ... ", "nrrd="+outdir+finalName+"-stitched_01.nrrd");
 	setKeyDown("none");
 
 	close();
