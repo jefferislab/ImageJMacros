@@ -1,15 +1,14 @@
 // "BatchConvertLSMsToPICs"
 //
 // This macro batch processes all the lsm files in a folder
-// saving them as pic files.
+// saving them as nrrd or pic files.
 // Limitations/Specifics
 // 1) Only works with Fiji
-// 2) Swaps channel 1 and 2
-// 3) Always flips vertically 
-// 4) Expects names to be in regular JLab format
-//    or in something where all it has to do is append the
-//    v01.pic v02.pic etc to the filestem
-
+// 2) No attempt is made to reorder channels
+// 3) Uses file locking when called with a directory as input, but NOT when
+//    called with a specific input file 
+//    (in which case we assume that someone else is handling this issue)
+// 
 // (Slightly) Adapted by Greg Jefferis from code at
 // http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
 
@@ -20,6 +19,11 @@ file = getArgument;
 dir=""
 outputDir=""
 outputformat="nrrd" // or pic
+useLocksAndCheckOutput = true; // by default
+
+// Set up for headless image opening
+run("Bio-Formats Macro Extensions");
+setBatchMode(true);
 
 // 1) Check what arguments we've received 
 // --------------------------------------
@@ -48,6 +52,7 @@ if (file!=""){
 			if(!endsWith(dir,"/")) dir=dir+"/";
 		} else {
 // single file
+			useLocksAndCheckOutput = false;
 			dir=File.getParent(arg[0])+"/";
 			file=File.getName(arg[0]);
 			processFile(dir,outputDir,file);
@@ -64,8 +69,6 @@ if(outputDir=="") outputDir = getDirectory("Choose output directory");
 
 // 3) Process files in the chosen directories
 // --------------------------------------
-
-setBatchMode(true);
 count = 0;
 countFiles(dir);
 print("Total files: "+count);
@@ -100,24 +103,34 @@ function processFiles(dir,outputDir) {
 
 function processFile(dir,outputDir,file) {
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
-		// Check if output already exists
-		c1outpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
-		if(File.exists(c1outpath)){
-			print("Skipping file: " + file + " since " + c1outpath + " already exists");
-			return;
-		}
 		path = dir+file;
-		// Check if someone is already working on this
-		lockpath=path+'.lock';
-		if(File.exists(lockpath)){
-			print("Skipping file: " + file + " since someone else is working on it");
-			return;
+		if(useLocksAndCheckOutput){
+			// Check if output already exists
+			c1outpath=outputDir+substring(file,0,lengthOf(file)-4)+"_01."+outputformat;
+			if(File.exists(c1outpath)){
+				print("Skipping file: " + file + " since " + c1outpath + " already exists");
+				return;
+			}
+			// Check if someone is already working on this
+			lockpath=path+'.lock';
+			if(File.exists(lockpath)){
+				print("Skipping file: " + file + " since someone else is working on it");
+				return;
+			}
+			File.saveString("",lockpath);
 		}
-		File.saveString("",lockpath);
 
 		imagesAlreadyOpen=nImages;
-		run("Bio-Formats Importer", "open=[" + path + "] view=[Standard ImageJ] stack_order=Default split_channels");
+		Ext.openImagePlus(path);
 		noImages=nImages-imagesAlreadyOpen;
+		if(noImages==1){
+			run("Split Channels");
+			noImages=nImages-imagesAlreadyOpen;
+		}
+		if(noImages!=3){
+			IJ.log("Warning there appear to be "+noImages+" channels (rather than 3).");
+		}
+
 		for(i=noImages;i>0;i--){
 			processImage();
 			if(outputformat=='pic'){
@@ -129,7 +142,9 @@ function processFile(dir,outputDir,file) {
 			}
 			close();
 		}
-		File.delete(lockpath);
+		if(useLocksAndCheckOutput){
+			File.delete(lockpath);
+		}
 	}
 }
 

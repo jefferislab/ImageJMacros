@@ -1,0 +1,37 @@
+// This macro will 
+
+
+// File handling
+// file="/Users/aostrov/Desktop/nm20110921c2_005-005.tif";
+// open(file);
+// current=getTitle();
+
+// Batch File Handling
+file = getArgument;
+arg = split(file,","); //useful if I want to start having multiple arguements 
+open(arg[0]);
+current=getTitle();
+
+
+// Kalman filter
+print("before") //error checking
+run("Kalman Stack Filter MBF", "variance=0.05 bias=0.80");
+// run("Median...", "radius=1.5 stack");
+print("after") //error checking
+
+// Rename filtered Stack
+kf="Kalman Stack Filter";
+selectWindow(kf);
+kf="kf-" + current;
+rename(kf);
+
+
+// Save filtered image in same directory
+// as original file
+kfsave=arg[1] + kf;
+save(kfsave);
+
+
+//clean up
+close();
+close();
