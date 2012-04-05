@@ -1,0 +1,65 @@
+// "BatchSmoothTifToAmira"
+//
+// This macro batch processes all the tif files
+// in a folder and any subfolders in that folder.
+// It then saves them in the Amiramesh format using the Amira_Writer plugin
+// The new filename will end in smooth.am
+
+// (Slightly) Adapted by Greg Jefferis from code at
+// http://rsb.info.nih.gov/ij/macros/BatchProcessFolders.txt
+
+// jefferis@gmail.com
+
+requires("1.33s");
+dir = getDirectory("Choose a Directory ");
+setBatchMode(true);
+count = 0;
+countFiles(dir);
+n = 0;
+processFiles(dir);
+//print(count+" files processed");
+
+function countFiles(dir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            countFiles(""+dir+list[i]);
+        else
+            count++;
+    }
+}
+
+function processFiles(dir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            processFiles(""+dir+list[i]);
+        else {
+           showProgress(n++, count);
+           //path = dir+list[i];
+           processFile(dir,list[i]);
+        }
+    }
+}
+
+function processFile(dir,file) {
+	if (endsWith(file, "final.nrrd")) {
+		path = dir+file;
+		// Trim the terminal / from the dir
+		file=substring(file,0,lengthOf(file)-5);
+		// and construct a new path
+		newpath=dir+file+"_16bits.nrrd";
+		print("newpath ="+newpath);
+
+		// check if this already exists
+		if(!File.exists(newpath)){
+			// if not, process
+			open(path);
+			run("16-bit");
+			setKeyDown("alt");
+			run("Nrrd ... ", "nrrd="+newpath);
+			setKeyDown("none");
+			close();
+		}
+	}
+}

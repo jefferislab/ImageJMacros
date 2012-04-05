@@ -1,0 +1,2 @@
+run("Amira...", "amirafile=/Volumes/JData/JPeople/Common/Neuroanatomy/ItoBrainMap/Brainmap_Tricolor_Level2_areasonly00.am");
+open("/Volumes/JData/JPeople/Common/Neuroanatomy/ItoBrainMap/Brainmap_Tricolor_Level2_Labels.csv");

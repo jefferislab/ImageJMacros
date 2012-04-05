@@ -1,0 +1,61 @@
+requires("1.33s"); 
+dir = getDirectory("Choose a stacks directory");
+outputDir = getDirectory("Choose output directory");
+setBatchMode(true);
+count = 0;
+countFiles(dir); //output dir should not be subfolder of input dir!
+print("Total files: "+count);
+n = 0;
+processFiles(dir, outputDir);
+
+function countFiles(dir) {
+		list = getFileList(dir);
+	for (i=0; i<list.length; i++) {
+		if (endsWith(list[i], "/"))
+            countFiles(""+dir+list[i]);
+	else
+		count++;
+	}
+}
+
+function processFiles(dir,outputDir) {
+	list = getFileList(dir);
+    for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+            processFiles(""+dir+list[i], outputDir);
+        else {
+		showProgress(n++, count);
+              processFile(dir,outputDir,list[i]);
+        }
+    }
+}
+
+function processFile(dir,outputDir,file) {
+
+	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
+		if(File.exists(outputDir+substring(file,0,indexOf(file,".lsm"))+"_01.Nrrd")==1 ) {
+			print("image lsm exist" + file);
+			return 0;
+		}
+		path = dir+list[i];
+		run("Bio-Formats Importer", "open=" + path + " color_mode=Default split_channels view=[Standard ImageJ] stack_order=Default");
+		title=getTitle();
+		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
+		workingImage=getImageID();
+		noImages++;
+		for(i=noImages;i>0;i--){
+			if(i==1) channel="_03";
+			if(i==2) channel="_01";
+			if(i==3) channel="_02";
+			selectImage(workingImage);
+	//		processImage();
+//			run("Biorad ...", "biorad=/Users/jefferis/Desktop/delete.PIC")
+run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,indexOf(file,".lsm"))+channel+".Nrrd]");//		"SAIV"+substring(file,indexOf(file,"_")+2,lastIndexOf(file,"_"))+"-1v_0"+channel+".pic]");
+//			saveAs("Jpeg", outputDir+substring(file,0,lengthOf(file)-4)+"_C"+i);
+//			close();
+			selectImage(workingImage);
+			close();
+			workingImage++;
+		} 
+	}
+}
