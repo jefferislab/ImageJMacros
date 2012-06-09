@@ -1,3 +1,23 @@
+// Takes two arguments, a file with it's full path and a list of
+// transformation functions that are required for the image.
+// To inform the macro of what tranformations are required, the
+// list consists of single letters not separated by spaces,
+// each letter representing a transformation that imageJ can
+// perform:
+// 
+// c -- rotate clockwise 90 degress
+// a -- rotate anticlockwise 90 degress
+// v -- vertically flip the image
+// h -- horizontally flip the image
+// f -- rotate 180 degress
+// r -- reverse the stack/ flip in Z
+
+// From what I remember, this macro was written de novo by
+// Sebastian Cachero, with minor modifications by Aaron
+// Ostrovsky.
+
+// This macro is generally called as part of ProcessingMicroscopeImages.
+
 requires("1.42k"); 
 argument = getArgument;
 
@@ -57,7 +77,8 @@ if(argument=="") {
 				if(makeNewName) newName=newName+"v";
 			}
 			if((operation=="r") && nSlices>1) {
-				run("Stack Reverser");
+				run("Flip Z"); // as of (at least) ImageJ 1.46j "Stack Reverser" became "Flip Z"
+				// run("Stack Reverser");
 				if(makeNewName) newName=newName+"r";
 			}
 			if(operation=="f"){ 
