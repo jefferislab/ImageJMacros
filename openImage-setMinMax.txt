@@ -1,0 +1,12 @@
+// Stolen from openImagesInImage5D.txt with the minor, relevant changes
+// Gets as an argument a single file with its full path 
+
+requires("1.42k"); 
+arg = getArgument;
+
+open(arg);
+getDimensions(width, height, channels, slices, frames);
+
+setSlice(slices/2);
+resetMinAndMax();
+setSlice(1);
