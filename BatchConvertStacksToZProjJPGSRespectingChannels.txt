@@ -103,7 +103,7 @@ function processFile(dir,outputDir,file) {
 	// 	close();
 	// }
 	if (endsWith(file, ".lsm") || endsWith(file,".LSM")) {
-		print("Processing file: "+file);
+		print("Converting LSM to JPG: "+file);
 		// Skip if jpegs already exist
 		
 		c1jpg=outputDir+substring(file,0,lengthOf(file)-4)+"_C1.jpg";
