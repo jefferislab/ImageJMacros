@@ -10,7 +10,7 @@
 // jefferis@gmail.com
 
 requires("1.33s"); 
-dir = getArgument;  // if we're running from the command line
+dir = getArgument;	// if we're running from the command line
 if (dir=="")  // interactive
 	dir = getDirectory("Choose a stacks directory");
 
@@ -31,7 +31,7 @@ function countFiles(dir) {
 	list = getFileList(dir);
 	for (i=0; i<list.length; i++) {
 		if (endsWith(list[i], "/"))
-            countFiles(""+dir+list[i]);
+			countFiles(""+dir+list[i]);
 	else // only count if this is an lsm file
 		if(isLSMFile(list[i])) count++;
 	}
@@ -39,16 +39,16 @@ function countFiles(dir) {
 
 function processFiles(dir,outputDir) {
 	list = getFileList(dir);
-    for (i=0; i<list.length; i++) {
-        if (endsWith(list[i], "/"))
-            processFiles(""+dir+list[i], outputDir+list[i]);
-        else {
-		if(isLSMFile(list[i])){
-			showProgress(n++, count);
-				processFile(dir,outputDir,list[i]);				
+	for (i=0; i<list.length; i++) {
+		if (endsWith(list[i], "/"))
+			processFiles(""+dir+list[i], ""+outputDir+list[i]);
+		else {
+			if(isLSMFile(list[i])){
+				showProgress(n++, count);
+				processFile(dir,outputDir,list[i]);
 			}
-        }
-    }
+		}
+	}
 }
 
 function processFile(dir,outputDir,file) {
