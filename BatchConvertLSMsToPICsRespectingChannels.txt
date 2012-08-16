@@ -253,7 +253,9 @@ function processFile(dir,outputDir,file) {
 		// Check that we have the same number of channels from the metadata file
 		// and the lsm file. 
 		
-		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
+		// run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
+		print("Trying to open LSM with with `open()` rather than with LOCI")
+		open(lsmpath)
 //		title=getTitle();
 //		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
 		workingImage=getImageID();
