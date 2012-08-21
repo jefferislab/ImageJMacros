@@ -182,8 +182,12 @@ function processFile(dir,outputDir,file) {
 //			} 
 			return;
 		}
+		print("Trying to open LSM with with `open()` rather than with LOCI");
+		open(lsmpath);
+		run("Split Channels");
+		
+		// run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
 
-		run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
 //		title=getTitle();
 //		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
 		workingImage=getImageID();
@@ -198,6 +202,7 @@ function processFile(dir,outputDir,file) {
 			jpegfile=substring(file,0,lengthOf(file)-4)+"_C"+lsmchannels[i];
 			saveAs("Jpeg", outputDir+jpegfile);
 			close();
+			print("Selecting Image " + workingImage);
 			selectImage(workingImage);
 			close();
 			workingImage++;

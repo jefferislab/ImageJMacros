@@ -254,8 +254,9 @@ function processFile(dir,outputDir,file) {
 		// and the lsm file. 
 		
 		// run("Bio-Formats Importer", "open=" + lsmpath + " view=[Standard ImageJ] stack_order=Default split_channels");
-		print("Trying to open LSM with with `open()` rather than with LOCI")
-		open(lsmpath)
+		print("Trying to open LSM with with `open()` rather than with LOCI");
+		open(lsmpath);
+		run("Split Channels");
 //		title=getTitle();
 //		noImages=parseInt(substring(title,(lengthOf(title)-1),lengthOf(title)));
 		workingImage=getImageID();
@@ -273,6 +274,7 @@ function processFile(dir,outputDir,file) {
 				run("Nrrd ... ", "nrrd=["+outputDir+substring(file,0,lastIndexOf(file,"."))+"_0"+channel+".nrrd]");
 				setKeyDown("none");
 			}
+			print("Selecting Image " + workingImage);
 			selectImage(workingImage);
 			close();
 			workingImage++;
