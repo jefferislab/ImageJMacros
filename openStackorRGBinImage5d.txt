@@ -1,0 +1,39 @@
+// Expects a Stack or an RGB.
+// The macro comes with a shortcup key 6.
+// You can get this to start up with Fiji
+// by going to Plugins->Macros->StartUp Macros...
+// and pasting everything in the macro block into the file.
+
+// Made by Aaron Ostrovsky for use because I'm lazy.
+// Liberal use of code stolen from OpenImagesInImage5D.txt
+// and http://rsb.info.nih.gov/ij/macros/Image5dMacros.txt.
+// Code to be used as is or modified, I don't take responsibility,
+// blah blah blah...
+
+macro "openStackOrRGBinImage5d... [6]" {
+	// Get image ID
+	workingImage=getImageID();
+	selectImage(workingImage);
+	// Get image dimensions
+	getDimensions(width, height, channels, slices, frames);
+	// check if image is a composite
+	if(is("composite")){ 
+		run("Stack to Image5D", "3rd=ch 4th=z 3rd_dimension_size="+ channels +" 4th_dimension_size="+ slices +" assign");
+
+	} else {
+		run("RGB to Image5D", "3rd=z 3rd_dimension_size="+slices);
+	}
+
+	// reset the min/max of each channel at a slice halfway through the stack
+	run("Image5D Extensions");
+	getDimensions(nw,nh,nch,nsl,nfr);
+	for( i=1; i<nch; i++){
+		// print("i: " + i);
+		// print("channels: "+nch);
+		run("Set Position", "x-position=1 y-position=1 channel="+(i+1)+" slice=" + nsl/2 + " frame=1 display=overlay");
+		resetMinAndMax();
+		//run("Set Channel Labels", i+"="+File.getName(argument[i]));
+	}
+	// reset position at first slice and force overlay display
+	run("Set Position", "x-position=1 y-position=1 channel=1 slice=1 frame=1 display=overlay");
+}
