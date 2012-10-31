@@ -1,0 +1,29 @@
+// Ask for output dir
+outputDir = getDirectory("Choose output directory");
+
+// ask for which image to open
+open();
+getDimensions(width, height, channels, slices, frames);
+
+run("Split Channels");
+
+current=getTitle();
+print("current: " + current);
+
+setSlice(slices/2);
+resetMinAndMax();
+
+
+run("8-bit");
+
+print("saving "+outputDir+substring(current,3,lastIndexOf(current,"."))+"_02_8bit.nrrd");
+
+setKeyDown("alt");
+run("Nrrd ... ", "nrrd=["+outputDir+substring(current,3,lastIndexOf(current,"."))+"_02_8bit.nrrd]");
+setKeyDown("none");
+
+for (i=0;i<channels;i++){
+	close();
+}
+// close();
+// close();
