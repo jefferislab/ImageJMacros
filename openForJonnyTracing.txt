@@ -1,5 +1,5 @@
 // Ask for output dir
-outputDir = getDirectory("Choose output directory");
+outputDir = getDirectory("home")+"/projects/TracingfruLHNFills/images/";
 
 // ask for which image to open
 open();
