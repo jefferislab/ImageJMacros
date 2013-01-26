@@ -6,8 +6,7 @@ outputDir = getDirectory("home")+"/projects/TracingfruLHNFills/images/";
 
 // ask for which image to open
 if(argument=="") {
-	print("You must pass an lsm to be opened");
-	exit();
+	processLSM(argument);
 } else {
 	argument = split(argument,":");
 	for (image=0;image<argument.length;image++){
@@ -40,7 +39,6 @@ function processLSM(lsm) {
 	for (i=0;i<channels;i++){
 		close();
 	}
-
 
 }
 
