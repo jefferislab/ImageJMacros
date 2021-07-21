@@ -133,6 +133,9 @@ function identify_template() {
   if(width==1024 && height==512 && depth==218) return "JFRC2";
   else if(width==1450 && height==725 && depth==436) return "JFRC2013";
   else if(width==1184 && height==592 && depth==218) return "JFRC201320x";
+  else if(width==512 && height==1024 && depth==220) return "JRC2017VNCFSymm";
+  else if(width==660 && height==1342 && depth==358) return "JRC2018VNCF";
+  else if(width==1024 && height==768 && depth==163) return "VNCIS1";
   
   return "unknown";
 }
@@ -148,6 +151,9 @@ function set_voxel_size() {
   if(template == "JFRC2") setVoxelSize(0.62088, 0.62088 , 0.62088 , "microns");
   else if(template == "JFRC2013") setVoxelSize(0.38, 0.38 , 0.38 , "microns");
   else if(template == "JFRC201320x") setVoxelSize(0.46, 0.46 , 0.46 , "microns");
+  else if(template == "JRC2017VNCFSymm") setVoxelSize(0.461, 0.461 , 0.7 , "microns");
+  else if(template == "JRC2018VNCF") setVoxelSize(0.4, 0.4 , 0.4 , "microns");
+  else if(template == "VNCIS1") setVoxelSize(0.43, 0.43 , 1.06 , "microns");
   else clear_bad_voxel_size(2.0);
 }
 
